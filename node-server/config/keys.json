@@ -1,0 +1,5 @@
+{
+	"loginToken": "ODI0MDE3NTI3Mjg5MDIwNTAw.YFpQIA.-NxVmLjr5hb_Xi4HHqIpi3ELgDM",
+	"dbURL": "mongodb://localhost:27017",
+	"dbName": "PBD"
+}
