@@ -1,9 +1,9 @@
-import express from 'express';
-const router = express.Router();
 import bcrypt from 'bcrypt';
+import express from 'express';
 import passport from 'passport';
-import { forwardAuthenticated } from '../config/auth.js';
 import dbManager from ".././lib/db.js";
+// import { ensureAuthenticated, forwardAuthenticated } from ".././config/auth.js";
+const router = express.Router();
 
 // router.get('/login', forwardAuthenticated, (req, res) => res.render('login'));
 // router.get('/register', forwardAuthenticated, (req, res) => res.render('register'));
@@ -178,6 +178,14 @@ class User {
     this.email = email
     this.password = password;
     this.createTime = new Date();
+  }
+}
+class Comment {
+  constructor(userId,forumId,content,attachments) {
+    this.userId = userId;
+    this.forumId = forumId;
+    this.content = content;
+    this.attachements = attachements
   }
 }
 export { router };

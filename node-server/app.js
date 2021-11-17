@@ -16,6 +16,12 @@ await dbManager.init();
 const app = express();
 import * as swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
+
+import busboy from 'connect-busboy'; //middleware for form/file upload
+// var path = require('path');     //used for file path
+import fs from 'fs-extra';  
+
+app.use(busboy()); 
 passport.serializeUser(function (user, done) {
   done(null, user._id);
 });
@@ -93,12 +99,49 @@ const options = {
     },
   },
   // List of files to be processes. You can also set globs './routes/*.js'
-  apis: ['./routes/*.js'],
+  apis: ['node-server/routes/*.js','node-server/app.js'],
 };
 app.use('/', indexRouter);
 app.use('/users', userRouter);
 const specs = swaggerJsdoc(options);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+
+/**
+ * @swagger
+ * /upload:
+ *   post:
+ *       descripton: Uploads a file.
+ *       consumes: 
+ *          - multipart/form-data
+ *       parameters:
+ *          - in: formData
+ *            name: upfile
+ *            type: file
+ *       responses:
+ *           200:
+ *               description: Sucesfull login
+ *           401:
+ *               description: Cant login
+ *               content:
+ *                   application/json:
+ *               schema:
+ *                   type: object
+ */
+app.post('/upload',function (req, res, next) {
+  var fstream;
+  req.pipe(req.busboy);
+  req.busboy.on('file', function (fieldname, file, filename) {
+      console.log("Uploading: " + filename);
+
+      //Path where image will be uploaded
+      fstream = fs.createWriteStream('node-server/img/' + filename);
+      file.pipe(fstream);
+      fstream.on('close', function () {    
+          console.log("Upload Finished of " + filename);              
+          res.redirect('back');           //where to go next
+      });
+  });
+});
 
 const PORT = process.env.PORT || 5000;
 
