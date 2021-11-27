@@ -3,10 +3,14 @@
 namespace Home;
 
 use Home\Helpers\Helper;
+use Home\Views\Categories;
 
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Helpers/Helper.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Views/Categories.php');
 
 $helper = new Helper();
+$categories = new Categories();
+var_dump($helper);
 ?>
 
 <!doctype html>
@@ -14,7 +18,6 @@ $helper = new Helper();
 
 <head>
   <meta charset="utf-8">
-
   <!-- Always force latest IE rendering engine or request Chrome Frame -->
   <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -25,6 +28,7 @@ $helper = new Helper();
   <meta name="description" content="XAMPP is an easy to install Apache distribution containing MariaDB, PHP and Perl." />
   <meta name="keywords" content="xampp, apache, php, perl, mariadb, open source distribution" />
 
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <link href="/dashboard/stylesheets/normalize.css" rel="stylesheet" type="text/css" />
   <link href="/dashboard/stylesheets/all.css" rel="stylesheet" type="text/css" />
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/3.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
@@ -58,6 +62,13 @@ $helper = new Helper();
       <div class="large-12 columns">
         <p>
           Tutaj będzie coś
+          <?php 
+          $categories->generateViews();
+          /*
+            echo '<pre>';
+            var_dump(file_get_contents(''));
+            echo '</pre>'; */
+          ?>
         </p>
       </div>
     </div>

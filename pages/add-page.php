@@ -47,6 +47,9 @@ $helper = new Helper();
 $data = isset($_POST['wiki-link']) ? $_POST['wiki-link'] : '';
 if ($data) {
 	$content = file_get_contents($data);
+	// echo '<pre>';
+	// var_dump($content);
+	// echo '</pre>';
 	$jsonMessage = json_decode($content);
 	echo $jsonMessage->parse->text;
 }
