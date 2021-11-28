@@ -2,11 +2,14 @@
 
 namespace Home\Pages;
 
+use Home\Collections\User;
 use Home\Helpers\Helper;
 
+include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/User.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Helpers/Helper.php');
 
 $helper = new Helper();
+$user = new User();
 ?>
 
 <!doctype html>
@@ -26,7 +29,7 @@ $helper = new Helper();
 </head>
 
 <body>
-	<?= $helper->getHeader() ?>
+	<?= $helper->getHeader($user->isUser(), $user->isModerator()) ?>
 	<form action="" name="signIn" method="POST">
 		<div>
 			<label for="username">Username:</label>

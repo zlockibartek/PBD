@@ -2,10 +2,13 @@
 
 namespace Home\Pages;
 
+use Home\Collections\User;
 use Home\Helpers\Helper;
 
+include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/User.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Helpers/Helper.php');
 
+$user = new User();
 $helper = new Helper();
 ?>
 <!doctype html>
@@ -26,7 +29,7 @@ $helper = new Helper();
 <body class="login">
 
 	<div>
-		<?= $helper->getHeader() ?>
+		<?= $helper->getHeader($user->isUser(), $user->isModerator()) ?>
 		<form action="" name="login" method="POST">
 			<div>
 				<label for="link">Dodaj link do API:</label>

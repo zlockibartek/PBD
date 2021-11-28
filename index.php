@@ -3,14 +3,51 @@
 namespace Home;
 
 use Home\Helpers\Helper;
-use Home\Views\Categories;
+use Home\Collections\Categories;
+use Home\Collections\SinglePage;
+use Home\Collections\User;
+use Home\Views\View;
 
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Helpers/Helper.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Views/Categories.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/Categories.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/SinglePage.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/User.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Views/View.php');
 
 $helper = new Helper();
 $categories = new Categories();
-var_dump($helper);
+$singlePage = new SinglePage();
+//keep session somehow
+$user = new User(); 
+$title = 'Kategorie';
+$view = new View();
+session_start();
+$_SESSION['user'] = 2; 
+echo '<pre>';
+var_dump($_SESSION['user']);
+echo '</pre>';
+session_destroy();
+if (!$_GET) {
+  // server is down so...
+  // $view->setGrid($categories->getCategories());
+  $view->setPage('');
+} else {
+  if (isset($_GET['category'])) {
+    $view->setGrid($categories->getCategories($_GET['category']));
+  }
+  if (isset($_GET['page'])) {
+    $content = $singlePage->getPage($_GET['page']);
+    if (!$content) {
+      $view->setPage('');
+      $title = 'Nie ma takiej strony';
+    }
+    else {
+      $view->setPage($content['text']);
+      $title = $content['title'];
+    }
+  }
+}
+
 ?>
 
 <!doctype html>
@@ -42,9 +79,7 @@ var_dump($helper);
 </head>
 
 <body class="index">
-  <?php
-  echo $helper->getHeader()
-  ?>
+  <?= $helper->getHeader($user->isUser(), $user->isModerator()) ?>
   <div id="wrapper">
     <div class="hero">
       <div class="row">
@@ -55,20 +90,13 @@ var_dump($helper);
     </div>
     <div class="row">
       <div class="large-12 columns">
-        <h2>Kategorie</h2>
+        <h2><?= $title ?></h2>
       </div>
     </div>
     <div class="row">
       <div class="large-12 columns">
         <p>
-          Tutaj będzie coś
-          <?php 
-          $categories->generateViews();
-          /*
-            echo '<pre>';
-            var_dump(file_get_contents(''));
-            echo '</pre>'; */
-          ?>
+          <?php $view->renderHTML(); ?>
         </p>
       </div>
     </div>

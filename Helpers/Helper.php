@@ -2,10 +2,12 @@
 
 namespace Home\Helpers;
 
-class Helper {
+class Helper
+{
 
-  public function getHeader() {
-    return '<div class="contain-to-grid">
+  public function getHeader($user = null, $moderator = null)
+  {
+    $html = '<div class="contain-to-grid">
     <nav class="top-bar" data-topbar>
       <ul class="title-area">
         <li class="name">
@@ -17,18 +19,17 @@ class Helper {
           </a>
         </li>
       </ul>
-
       <section class="top-bar-section">
-        <!-- Right Nav Section -->
-        <ul class="right">
-          <li class=""><a href="/mongo/pages/add-page.php">Add new page</a></li>
-          <li class=""><a href="/mongo/pages/login.php">Login</a></li>
-          <li class=""><a href="/mongo/pages/sign-in.php">Sign in</a></li>
-          <li class=""><a href="/phpmyadmin/">mongoDb</a></li>
-        </ul>
+      <ul class="right">';
+    $html .= $user ? '<li class=""><a href="/mongo/pages/add-page.php">Add new page</a></li>
+    <li class=""><a href="/phpmyadmin/">Logout</a></li>' : '';
+    $html .= !$user ? '<li class=""><a href="/mongo/pages/login.php">Login</a></li>
+      <li class=""><a href="/mongo/pages/sign-in.php">Sign in</a></li>' : '';
+    $html .= $moderator ? '<li class=""><a href="/mongo/pages/comments.php">Comments</a></li>' : '';
+    $html .= '</ul>
       </section>
-    </nav>
-  </div>';
+      </nav>
+      </div>';
+    return $html;
   }
-
 }
