@@ -65,7 +65,8 @@ class Comments
 
 	}
 
-	public function renderAwaitingComments() {
-
+	public function renderAwaitingComments() 
+	{
+		return '<div><form method="POST" enctype="multipart/form-data"><input type="file" name="comment" id="commentFile"><input type="submit" value="save"></form></div>';
 	}
 }

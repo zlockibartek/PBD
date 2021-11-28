@@ -4,8 +4,11 @@ namespace Home\Collections;
 
 class Categories
 {
-	const DEFAULT_CATEGORY = 'Countries_in_Europe';
-	const API = 'http://10.99.2.20:5000/wiki-category';
+	const DEFAULT_CATEGORY = 0;
+	const DEFAULT_COUNT = 48;
+	const DEFAULT_OFFSET = 0;
+	const API = 'http://10.99.2.20:5000/query/categories';
+	const API_PAGE = 'http://10.99.2.20:5000/query/pages';
 	protected ?array $categories = null;
 
 
@@ -13,10 +16,11 @@ class Categories
 	{
 		$data = json_encode(
 			array(
-				'category' => $category ?? self::DEFAULT_CATEGORY,
-				'sort' => '',
-				'offset' => '',
-			));
+				'categoryid' => intval($category),
+				'count' => self::DEFAULT_COUNT,
+				'offset' => self::DEFAULT_OFFSET,
+			)
+		);
 
 		$options = array(
 			'http' => array(
@@ -25,25 +29,38 @@ class Categories
 				'content' => $data
 			)
 		);
-		
-		$context = stream_context_create($options);
-		$result = json_decode(file_get_contents(self::API, false, $context), true);
-		$categories = isset($result['categories']) ? $result['categories'] : [];
-		$pages = isset($result['pages']) ? $result['pages'] : [];
+
 		$result = [];
+		$context = stream_context_create($options);
+		$categories = json_decode(file_get_contents(self::API, false, $context), true);
+		
 		if ($categories) {
 			$result['content'] = $categories;
 			$result['type'] = 'category';
-			$result['separator'] = true;
-		}
-		else {
-			$result['content'] = $pages;
+		} else {
 			$result['type'] = 'page';
-			$result['separator'] = false;
+			$data = json_encode(
+				array(
+					'categoryid' => intval($category),
+					'count' => self::DEFAULT_COUNT,
+					'offset' => self::DEFAULT_OFFSET,
+				)
+			);
+
+			$options = array(
+				'http' => array(
+					'header'  => "Content-type: application/json",
+					'method'  => 'POST',
+					'content' => $data
+				)
+			);
+			$context = stream_context_create($options);
+			$categories = json_decode(file_get_contents(self::API_PAGE, false, $context), true);
+			$result['content'] = $categories;
 		}
+		// echo '<pre>';
 		
+
 		return $result;
-
 	}
-
 }

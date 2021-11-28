@@ -4,44 +4,44 @@ namespace Home;
 
 use Home\Helpers\Helper;
 use Home\Collections\Categories;
+use Home\Collections\Comments;
+use Home\Collections\Pages;
 use Home\Collections\SinglePage;
 use Home\Collections\User;
 use Home\Views\View;
 
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Helpers/Helper.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/Categories.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/Pages.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/Comments.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/SinglePage.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/User.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Views/View.php');
 
 $helper = new Helper();
 $categories = new Categories();
+$comments = new Comments();
 $singlePage = new SinglePage();
+$pages = new Pages();
+$user = new User();
+
+$file = $_POST ? $_POST['commentFile'] : '';
+
 //keep session somehow
-$user = new User(); 
+$user = new User();
 $title = 'Kategorie';
 $view = new View();
 session_start();
-$_SESSION['user'] = 2; 
-echo '<pre>';
-var_dump($_SESSION['user']);
-echo '</pre>';
-session_destroy();
+
 if (!$_GET) {
-  // server is down so...
-  // $view->setGrid($categories->getCategories());
-  $view->setPage('');
+  $view->setGrid($pages->getPages());
 } else {
-  if (isset($_GET['category'])) {
-    $view->setGrid($categories->getCategories($_GET['category']));
-  }
   if (isset($_GET['page'])) {
     $content = $singlePage->getPage($_GET['page']);
     if (!$content) {
       $view->setPage('');
       $title = 'Nie ma takiej strony';
-    }
-    else {
+    } else {
       $view->setPage($content['text']);
       $title = $content['title'];
     }
@@ -100,6 +100,9 @@ if (!$_GET) {
         </p>
       </div>
     </div>
+  </div>
+  <div>
+    <?= $comments->renderAwaitingComments() ?>
   </div>
 
   <footer>

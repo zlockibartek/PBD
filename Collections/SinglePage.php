@@ -6,11 +6,11 @@ class SinglePage
 {
 	const API = 'http://10.99.2.20:5000/wiki-page';
 
-	public function getPage($page = null)
+	public function getPage($pageId = null)
 	{
 		$data = json_encode(
 			array(
-				'title' => $page,
+				'pageid' => $pageId,
 			));
 
 		$options = array(
@@ -23,6 +23,9 @@ class SinglePage
 		
 		$context = stream_context_create($options);
 		$result = json_decode(file_get_contents(self::API, false, $context), true);
+		// echo '<pre>';
+		// var_dump($result);
+		// echo '</pre>';
 		$result = isset($result['parse']) ? $result['parse'] : null;
 		if (!$result)
 			return $result;

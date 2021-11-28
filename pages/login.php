@@ -9,6 +9,8 @@ include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/User.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Helpers/Helper.php');
 
 $user = new User();
+$user->logIn();
+$user->sendComment('');
 $helper = new Helper();
 ?>
 <!doctype html>
@@ -50,6 +52,7 @@ $helper = new Helper();
 </html>
 <?php
 $data = $_POST;
+
 if ($_POST) {
 	$login = $data['username'];
 	$password = $data['password'];

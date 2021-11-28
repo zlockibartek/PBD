@@ -14,8 +14,7 @@ class View
 	{
 		$html = '<div class="row hidden-md-up postsGridWrap">';
 		foreach ($content['content'] as $category) {
-			$category['title'] = $content['separator'] ? explode(':', $category['title'])[1] : $category['title'];
-			$category['url'] = "index.php?" . $content['type'] . "=" . str_replace(' ', '_',$category['title']);
+			$category['url'] = "index.php?" . $content['type'] . "=" . $category['pageId'];
 			$html .= '<div class="col-md-' . self::PERCOL . ' mb-2 mt-2">
 						<div class="posts-card m-auto">
 							<a href="' . $category['url'] . '">
