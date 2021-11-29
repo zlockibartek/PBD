@@ -10,7 +10,6 @@ use Home\Collections\SinglePage;
 use Home\Collections\User;
 use Home\Views\View;
 
-include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Helpers/Helper.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/Categories.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/Pages.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/Comments.php');
@@ -18,31 +17,35 @@ include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/SinglePage.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/User.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Views/View.php');
 
-$helper = new Helper();
 $categories = new Categories();
 $comments = new Comments();
 $singlePage = new SinglePage();
 $pages = new Pages();
 $user = new User();
 
-$file = $_POST ? $_POST['commentFile'] : '';
+// $file = $_POST ? $_POST['commentFile'] : '';
+
+$headerCookies = isset($_COOKIE['header_cookies']) ? $_COOKIE['header_cookies'] : '';
+$headerRoles = isset($_COOKIE['roles']) ? $_COOKIE['roles'] : '';
+$user->setCookies($headerCookies);
+$user->setRoles($headerRoles);
 
 //keep session somehow
-$user = new User();
 $title = 'Kategorie';
 $view = new View();
-session_start();
 
 if (!$_GET) {
   $view->setGrid($pages->getPages());
 } else {
   if (isset($_GET['page'])) {
     $content = $singlePage->getPage($_GET['page']);
+    $commentsP = $comments->getComments($_GET['page']);
     if (!$content) {
       $view->setPage('');
       $title = 'Nie ma takiej strony';
     } else {
       $view->setPage($content['text']);
+      $view->setComments($commentsP);
       $title = $content['title'];
     }
   }
@@ -79,7 +82,7 @@ if (!$_GET) {
 </head>
 
 <body class="index">
-  <?= $helper->getHeader($user->isUser(), $user->isModerator()) ?>
+  <?= $view->getHeader($user->isLogged(), $user->isModerator()) ?>
   <div id="wrapper">
     <div class="hero">
       <div class="row">

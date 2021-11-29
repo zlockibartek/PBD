@@ -3,10 +3,21 @@
 namespace Home\Pages;
 
 use Home\Collections\Comments;
+use Home\Collections\User;
+use Home\Views\View;
 
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/Comments.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/User.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Views/View.php');
 
 $comments = new Comments();
+$view = new View();
+$user = new User();
+
+$headerCookies = isset($_COOKIE['header_cookies']) ? $_COOKIE['header_cookies'] : '';
+$headerRoles = isset($_COOKIE['roles']) ? $_COOKIE['roles'] : '';
+$user->setCookies($headerCookies);
+$user->setRoles($headerRoles);
 
 ?>
 
@@ -24,7 +35,7 @@ $comments = new Comments();
 <body class="comments">
 
 	<div>
-		<?= $helper->getHeader($user->isUser(), $user->isModerator()) ?>
+		<?= $view->getHeader($user->isLogged(), $user->isModerator()) ?>
 		
 		<div>
 			<a href="/mongo/pages/sign-in.php">Sign in</a>

@@ -3,13 +3,19 @@
 namespace Home\Pages;
 
 use Home\Collections\User;
-use Home\Helpers\Helper;
+use Home\Views\View;
 
+include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Views/View.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/User.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Helpers/Helper.php');
 
-$helper = new Helper();
 $user = new User();
+$view = new View();
+
+$headerCookies = isset($_COOKIE['header_cookies']) ? $_COOKIE['header_cookies'] : '';
+$headerRoles = isset($_COOKIE['roles']) ? $_COOKIE['roles'] : '';
+$user->setCookies($headerCookies);
+$user->setRoles($headerRoles);
+
 ?>
 
 <!doctype html>
@@ -29,7 +35,7 @@ $user = new User();
 </head>
 
 <body>
-	<?= $helper->getHeader($user->isUser(), $user->isModerator()) ?>
+	<?= $view->getHeader($user->isLogged(), $user->isModerator()) ?>
 	<form action="" name="signIn" method="POST">
 		<div>
 			<label for="username">Username:</label>
@@ -49,21 +55,4 @@ $user = new User();
 </html>
 
 <?php
-$data = $_POST;
-if ($_POST) {
-	$login = $data['username'];
-	$password = $data['password'];
-	//validate password?
-	$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-}
-//check if user data meets requirements
 
-//if everything is ok, send alert
-?>
-
-
-
-<?php
-// echo '<pre>';
-// var_dump($_POST);
-// echo '</pre>';

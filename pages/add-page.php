@@ -3,13 +3,19 @@
 namespace Home\Pages;
 
 use Home\Collections\User;
-use Home\Helpers\Helper;
+use Home\Views\View;
 
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/User.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Helpers/Helper.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Views/View.php');
 
 $user = new User();
-$helper = new Helper();
+$view = new View();
+
+$headerCookies = isset($_COOKIE['header_cookies']) ? $_COOKIE['header_cookies'] : '';
+$headerRoles = isset($_COOKIE['roles']) ? $_COOKIE['roles'] : '';
+$user->setCookies($headerCookies);
+$user->setRoles($headerRoles);
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -29,7 +35,7 @@ $helper = new Helper();
 <body class="login">
 
 	<div>
-		<?= $helper->getHeader($user->isUser(), $user->isModerator()) ?>
+		<?= $view->getHeader($user->isLogged(), $user->isModerator()) ?>
 		<form action="" name="login" method="POST">
 			<div>
 				<label for="link">Dodaj link do API:</label>

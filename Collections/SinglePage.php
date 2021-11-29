@@ -23,9 +23,7 @@ class SinglePage
 		
 		$context = stream_context_create($options);
 		$result = json_decode(file_get_contents(self::API, false, $context), true);
-		// echo '<pre>';
-		// var_dump($result);
-		// echo '</pre>';
+
 		$result = isset($result['parse']) ? $result['parse'] : null;
 		if (!$result)
 			return $result;

@@ -10,14 +10,14 @@ class Pages
 	protected ?array $categories = null;
 
 
-	public function getPages($title = null, $offset = null, $sort = null, $count = null)
+	public function getPages($offset = null, $sort = null, $count = null, $title = null)
 	{
 		$data = json_encode(
 			array(
 				'title' => $title ?? '',
 				'count' => $count ?? self::DEFAULT_COUNT,
 				'offset' => $offset ?? self::DEFAULT_OFFSET,
-				'sort' => $sort ?? 'last',
+				'sort' => $sort ?? 'popular',
 			)
 		);
 

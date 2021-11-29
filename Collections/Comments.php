@@ -4,6 +4,8 @@ namespace Home\Collections;
 
 class Comments
 {
+	const DEFAULT_COUNT = 20;
+	const DEFAULT_OFFSET = 0; 
 	const API = 'http://10.99.2.20:5000/query/comments';
 	protected $comments; 
 
@@ -11,7 +13,9 @@ class Comments
 	{
 		$data = json_encode(
 			array(
-				'pageid' => $pageId,
+				'pageid' => intval($pageId),
+				'count' => self::DEFAULT_COUNT,
+				'offset' => self::DEFAULT_OFFSET,
 			)
 		);
 
@@ -22,20 +26,12 @@ class Comments
 				'content' => $data
 			)
 		);
-
+		
+		$result = [];
 		$context = stream_context_create($options);
 		$result = json_decode(file_get_contents(self::API, false, $context), true);
-		if ($pageId) {
-			return $this->renderAcceptedComments($result);
-		}
-		return $this->renderAwaitingComments();
-		$result = isset($result['parse']) ? $result['parse'] : null;
-		if (!$result)
-			return $result;
-		$content['text'] = isset($result['text']) ? $result['text'] : '';
-		$content['title'] = isset($result['title']) ? $result['title'] : '';
-		$content['pageId'] = isset($result['pageid']) ? $result['pageid'] : '';
-		return $content;
+
+		return $result;
 	}
 
 	public function addComment($pageId, $userId, $text)
@@ -61,12 +57,13 @@ class Comments
 		return $result;
 	}
 
-	public function renderAcceptedComments() {
+	public function renderAcceptedComments() 
+	{
 
 	}
 
 	public function renderAwaitingComments() 
 	{
-		return '<div><form method="POST" enctype="multipart/form-data"><input type="file" name="comment" id="commentFile"><input type="submit" value="save"></form></div>';
+		return '';//'<div><form method="POST" enctype="multipart/form-data"><input type="file" name="comment" id="commentFile"><input type="submit" value="save"></form></div>';
 	}
 }
