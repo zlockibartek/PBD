@@ -8,7 +8,7 @@ class User
 	const USER = 'user';
 	const API_LOGIN = 'http://10.99.2.20:5000/users/login';
 	const API_LOGOUT = 'http://10.99.2.20:5000/users/logout';
-	const API_REGISTER = 'http://10.99.2.20:5000/users/login';
+	const API_REGISTER = 'http://10.99.2.20:5000/users/register';
 	const API_COMMENT = 'http://10.99.2.20:5000/users/comment';
 	const API_FILE = 'http://10.99.2.20:5000/users/upload';
 
@@ -48,6 +48,27 @@ class User
 			setcookie('header_cookies', $http_response_header[5], time() + 3600, '/');
 			setcookie('roles', $this->roles, time() + 3600, '/');
 		}
+	}
+
+	public function register($login, $password)
+	{
+		$data = json_encode(
+			array(
+				'email' => $login,
+				'password' => $password,
+			)
+		);
+
+		$options = array(
+			'http' => array(
+				'header'  => "Content-type: application/json",
+				'method'  => 'POST',
+				'content' => $data
+			)
+		);
+
+		$context = stream_context_create($options);
+		$login = json_decode(file_get_contents(self::API_REGISTER, false, $context), true);
 	}
 
 	public function logOut()

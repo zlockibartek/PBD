@@ -28,14 +28,38 @@ class View
 		echo $this->view;
 	}
 
-	public function setComments($content)
+	public function setComments($content, $main = null, $moderator = null)
 	{
-		ob_flush();
-		include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Views/Comments.php');
-		$html = ob_get_clean();
+		$html = '<div id="commentsBox" >
+            <div id="makeCommentBox">
+                <p class="LebelBasic"></p>
+                <input type="text" id="makeCommentText" required minlength="4" maxlength="8" size="300"> <!--Pozmieniać wartości-->
+                <div id="makeCommentFiles">
+                    <input type="file" id="commentFile1" name="commentFile" accept=".jpg,.jpeg,.png,.gif">
+                </div>
+                <input type="submit" id="makeCommentSubmit" Value="Comment">
+            </div>
+            <div id="commentsListBox">
+                <ul id="commentList">';
+		if ($content) {
+			foreach ($content as $comment) {
+				$html .= '<li>
+								<div class="commentBox">
+									<div class="commentCred">
+										<p class="commentUsername">' . $comment['eamil'] . '</p>
+										<p class="commentDate">' . $comment['timestamp'] . '</p>
+									</div>
+									<p class="commentText">' . $comment['text'] . '</p>
+							</li>';
+			}
+		}
+		$html .= '</ul>
+            </div>
+        </div>';
+
 		$this->view .= $html;
 	}
-	
+
 	public function getHeader($user = null, $moderator = null)
 	{
 		$html = '<div class="contain-to-grid">
@@ -52,15 +76,15 @@ class View
       </ul>
       <section class="top-bar-section">
       <ul class="right">';
-    $html .= $user ? '<li class=""><a href="/mongo/pages/add-page.php">Add new page</a></li>
+		$html .= $user ? '<li class=""><a href="/mongo/pages/add-page.php">Add new page</a></li>
     <li class=""><a href="/mongo/pages/login.php?action=logout"">Logout</a></li>' : '';
-    $html .= !$user ? '<li class=""><a href="/mongo/pages/login.php">Login</a></li>
+		$html .= !$user ? '<li class=""><a href="/mongo/pages/login.php">Login</a></li>
       <li class=""><a href="/mongo/pages/sign-in.php">Sign in</a></li>' : '';
-    $html .= $moderator ? '<li class=""><a href="/mongo/pages/comments.php">Comments</a></li>' : '';
-    $html .= '</ul>
+		$html .= $moderator ? '<li class=""><a href="/mongo/pages/comments.php">Comments</a></li>' : '';
+		$html .= '</ul>
       </section>
       </nav>
       </div>';
-    return $html;
+		return $html;
 	}
 }

@@ -16,6 +16,10 @@ $headerRoles = isset($_COOKIE['roles']) ? $_COOKIE['roles'] : '';
 $user->setCookies($headerCookies);
 $user->setRoles($headerRoles);
 
+if ($_POST) {
+	$user->register($_POST['username'], $_POST['password']);
+}
+
 ?>
 
 <!doctype html>

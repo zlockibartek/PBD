@@ -58,9 +58,7 @@ class Categories
 			$categories = json_decode(file_get_contents(self::API_PAGE, false, $context), true);
 			$result['content'] = $categories;
 		}
-		// echo '<pre>';
 		
-
 		return $result;
 	}
 }

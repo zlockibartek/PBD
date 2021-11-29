@@ -4,13 +4,13 @@ namespace Home\Collections;
 
 class Pages
 {
-	const DEFAULT_COUNT = 50;
+	const DEFAULT_COUNT = 21;
 	const DEFAULT_OFFSET = 0;
 	const API = 'http://10.99.2.20:5000/query/pages';
 	protected ?array $categories = null;
 
 
-	public function getPages($offset = null, $sort = null, $count = null, $title = null)
+	public function getPages($sort = null, $offset = null, $count = null, $title = null)
 	{
 		$data = json_encode(
 			array(

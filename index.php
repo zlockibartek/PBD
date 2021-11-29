@@ -33,21 +33,21 @@ $user->setRoles($headerRoles);
 //keep session somehow
 $title = 'Kategorie';
 $view = new View();
-
-if (!$_GET) {
-  $view->setGrid($pages->getPages());
+$commentsView = new View();
+$button = isset($_GET['button']) ? $_GET['button'] : null;
+$page = isset($_GET['page']) ? $_GET['page'] : '';
+if (!$page) {
+  $view->setGrid($pages->getPages($button));
 } else {
-  if (isset($_GET['page'])) {
-    $content = $singlePage->getPage($_GET['page']);
-    $commentsP = $comments->getComments($_GET['page']);
-    if (!$content) {
-      $view->setPage('');
-      $title = 'Nie ma takiej strony';
-    } else {
-      $view->setPage($content['text']);
-      $view->setComments($commentsP);
-      $title = $content['title'];
-    }
+  $content = $singlePage->getPage($page);
+  $commentsP = $comments->getComments($page);
+  if (!$content) {
+    $view->setPage('');
+    $title = 'Nie ma takiej strony';
+  } else {
+    $view->setPage($content['text']);
+    $view->setComments($commentsP);
+    $title = $content['title'];
   }
 }
 
@@ -93,7 +93,13 @@ if (!$_GET) {
     </div>
     <div class="row">
       <div class="large-12 columns">
-        <h2><?= $title ?></h2>
+        <h2>
+          <?= $title ?>
+          <?php if (!$page): ?>
+          <a href="?button=last"><button id="latest">Popular</button></a>
+          <a href="?button=popular"><button id="popular">Latest</button></a>
+            <?php endif; ?>
+        </h2>
       </div>
     </div>
     <div class="row">
