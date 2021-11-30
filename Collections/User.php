@@ -7,6 +7,7 @@ class User
 	const MODERATOR = 'moderator';
 	const USER = 'user';
 	const API_LOGIN = 'http://10.99.2.20:5000/users/login';
+	const API_PAGE = 'http://10.99.2.20:5000/users/page';
 	const API_LOGOUT = 'http://10.99.2.20:5000/users/logout';
 	const API_REGISTER = 'http://10.99.2.20:5000/users/register';
 	const API_COMMENT = 'http://10.99.2.20:5000/users/comment';
@@ -115,6 +116,28 @@ class User
 
 		$context = stream_context_create($options);
 		$status = json_decode(file_get_contents(self::API_COMMENT, false, $context), true);
+	}
+
+	public function sendPage($title) {
+		$data = json_encode(
+			array(
+				'title' => $title,
+			)
+		);
+		$options = array(
+			'http' => array(
+				'header'  => "Content-type: application/json\r\n" .
+					"Cookie:" . explode('set-cookie:', $this->cookies)[1] . "\r\n",
+				'method'  => 'POST',
+				'content' => $data
+			)
+		);
+
+		$context = stream_context_create($options);
+		$status = json_decode(file_get_contents(self::API_PAGE, false, $context), true);
+		echo '<pre>';
+		var_dump($status);
+		echo '</pre>';
 	}
 
 	public function sendFile($file)
