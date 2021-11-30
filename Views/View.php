@@ -140,10 +140,17 @@ class View
 	private function displayAttachment($source)
 	{
 		if($source){
-			if(mime_content_type($source)== "image/gif"){
-				return '<img style="max-width: 100px; max-height: 100px;" src=' . $source . '/>';
+			if(strpos($source, ".mp4")){
+				return '<video src=' . $source . ' autoplay loop>';
 			}
-			return '<p>' . $source . '</p>';
+			return '<img style="max-width: 100px; max-height: 100px;" src=' . $source . '>';
+			/*if(fnmatch(mime_content_type($source), "image/*")){
+				return '<img style="max-width: 100px; max-height: 100px;" src=' . $source . '>';
+			}
+			if(fnmatch(mime_content_type($source), "video/*")){
+				return '<video src=' . $source . 'autoplay >';
+			}
+			return '<p>' . $source . '</p>';*/
 		}
 		return '';
 	}
