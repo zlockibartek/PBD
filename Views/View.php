@@ -2,12 +2,15 @@
 
 namespace Home\Views;
 
+use DateTime;
+
 class View
 
 {
 	const PERCOL = 4;
 	const PERROW = 3;
 	const QUANTITY = 48;
+	const SERVER = '//10.99.2.20:5000/img/';
 	private $view = '';
 
 	public function setGrid($content)
@@ -43,24 +46,29 @@ class View
 	{
 		$html = '<div id="commentsBox" >
             <div id="makeCommentBox">
+			<form method="POST" enctype="multipart/form-data">
                 <p class="LebelBasic"></p>
-                <input type="text" id="makeCommentText" required minlength="4" maxlength="8" size="300"> <!--Pozmieniać wartości-->
+                <input type="text" id="makeCommentText" name="send" required minlength="4" size="300"> <!--Pozmieniać wartości-->
                 <div id="makeCommentFiles">
-                    <input type="file" id="commentFile1" name="commentFile" accept=".jpg,.jpeg,.png,.gif">
+                    <input type="file" id="commentFile1" name="file" accept=".jpg,.jpeg,.png,.gif">
                 </div>
                 <input type="submit" id="makeCommentSubmit" Value="Comment">
+				</form>
             </div>
             <div id="commentsListBox">
                 <ul id="commentList">';
 		if ($content) {
+			$date = new DateTime();
 			foreach ($content as $comment) {
+				$file = isset($comment['attachements']) && $comment['attachements'] ? self::SERVER . $comment['attachements'][0] : '';
 				$html .= '<li>
 								<div class="commentBox">
 									<div class="commentCred">
 										<p class="commentUsername">' . $comment['eamil'] . '</p>
-										<p class="commentDate">' . $comment['timestamp'] . '</p>
+										<p class="commentDate">' . date('Y-m-d H:i:s', $comment['timestamp']/1000) . '</p>
 									</div>
 									<p class="commentText">' . $comment['text'] . '</p>';
+									$html .= '<img style="max-width: 100px; max-height: 100px;" src=' . $file . '/>';
 									$html .= $moderator ? '<input type="submit" class="deleteComment" Value="Delete">' : '';	
 							$html .= '</li>';
 			}

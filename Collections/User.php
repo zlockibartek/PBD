@@ -91,18 +91,13 @@ class User
 		setcookie('roles', '', '1', '/');
 	}
 
-	public function updateStatus($cookies)
-	{
-	}
-
-	public function sendComment($text)
+	public function sendComment($text, $pageId, $attachment)
 	{
 		$data = json_encode(
 			array(
-				"email" => "a@a",
-				"text" => "abcdefghijklm",
-				"pageid" => "1",
-				"attachements" => ''
+				"text" => $text,
+				"pageid" => intval($pageId),
+				"attachements" => is_array($attachment) ? $attachment : [$attachment],
 			)
 		);
 		$options = array(
@@ -116,6 +111,9 @@ class User
 
 		$context = stream_context_create($options);
 		$status = json_decode(file_get_contents(self::API_COMMENT, false, $context), true);
+		echo '<pre>';
+		var_dump($status);
+		echo '</pre>';
 	}
 
 	public function sendPage($title) {
@@ -135,9 +133,6 @@ class User
 
 		$context = stream_context_create($options);
 		$status = json_decode(file_get_contents(self::API_PAGE, false, $context), true);
-		echo '<pre>';
-		var_dump($status);
-		echo '</pre>';
 	}
 
 	public function sendFile($file)
@@ -165,7 +160,7 @@ class User
 		);
 
 		$context = stream_context_create($options);
-		$status = json_decode(file_get_contents(self::API_FILE, false, $context), true);
+		file_get_contents(self::API_FILE, false, $context);
 	}
 
 	public function isModerator()
