@@ -2,11 +2,25 @@
 
 namespace Home\Pages;
 
-use Home\Helpers\Helper;
+use Home\Collections\User;
+use Home\Views\View;
 
-include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Helpers/Helper.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/User.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Views/View.php');
 
-$helper = new Helper();
+$user = new User();
+$view = new View();
+
+
+$headerCookies = isset($_COOKIE['header_cookies']) ? $_COOKIE['header_cookies'] : '';
+$headerRoles = isset($_COOKIE['roles']) ? $_COOKIE['roles'] : '';
+$user->setCookies($headerCookies);
+$user->setRoles($headerRoles);
+
+$wiki = isset($_POST['wiki']) ? $_POST['wiki'] : '';
+if ($wiki) {
+	$user->sendPage($wiki);
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -26,11 +40,11 @@ $helper = new Helper();
 <body class="login">
 
 	<div>
-		<?= $helper->getHeader() ?>
+		<?= $view->getHeader($user->isLogged(), $user->isModerator()) ?>
 		<form action="" name="login" method="POST">
 			<div>
 				<label for="link">Dodaj link do API:</label>
-				<input type="text" id="wiki-link" name="wiki-link" required>
+				<input type="text" id="wiki" name="wiki" required>
 				<p>Przykład poprawnej strony: https://en.wikipedia.org/w/api.php?action=parse&format=json&page=Pet_door&prop=text&formatversion=2</p>
 			</div>
 			<input type="submit" value="Add page">
@@ -42,22 +56,4 @@ $helper = new Helper();
 </body>
 
 </html>
-<?php
 
-$data = isset($_POST['wiki-link']) ? $_POST['wiki-link'] : '';
-if ($data) {
-	$content = file_get_contents($data);
-	$jsonMessage = json_decode($content);
-	echo $jsonMessage->parse->text;
-}
-
-//check if user data meets requirements
-
-//if everything is ok, send alert
-
-?>
-
-<?php
-// echo '<pre>';
-// var_dump($_POST);
-// echo '</pre>';
