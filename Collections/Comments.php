@@ -34,6 +34,30 @@ class Comments
 		return $result;
 	}
 
+	public function getAllComments($count = self::DEFAULT_COUNT, $offset = self::DEFAULT_OFFSET)
+	{
+		/*Dummy dane*/
+		if($offset == 0){
+			$result = array(array('eamil' => "Dummy",'text' => "Text Dummy Text Dummy Text DummyText Dummy Text DummyTextText Dummy Text DummyText Dummy Text DummyTextText Dummy Text DummyText Dummy Text DummyTextText Dummy Text DummyText Dummy Text DummyTextText Dummy Text DummyText Dummy Text DummyTextText Dummy Text DummyText Dummy Text DummyText Text DummyText Dummy Text DummyText Dummy Text DummyText Dummy Text DummyText Dummy Text DummyText Dummy Text Dummy", 'pageiD' => "232325352"), array('eamil' => "Dummy",'text' => "Text Dummy Text Dummy", 'pageiD' => "232325352"), array('eamil' => "Dummy",'text' => "Text Dummy Text Dummy", 'pageiD' => "232325352"), array('eamil' => "Dummy",'text' => "Text Dummy Text Dummy", 'pageiD' => "232325352"), array('eamil' => "Dummy",'text' => "Text Dummy Text Dummy", 'pageiD' => "232325352"));
+		}else{
+			$result = array(array('eamil' => "Dummy 2",'text' => "Text Dummy Text Dummy 2", 'attachment' => "crab.gif", 'pageiD' => "232325352"), array('eamil' => "Dummy",'text' => "Text Dummy Text Dummy", 'pageiD' => "232325352"), array('eamil' => "Dummy",'text' => "Text Dummy Text Dummy", 'pageiD' => "232325352"), array('eamil' => "Dummy",'text' => "Text Dummy Text Dummy", 'pageiD' => "232325352"), array('eamil' => "Dummy",'text' => "Text Dummy Text Dummy", 'pageiD' => "232325352"));
+		}
+		
+
+		return $result;
+		/*
+			[
+				{
+					'eamil': "Dummy"
+					'text': "Text Dummy Text Dummy"
+					'attachment': ""
+					'pageiD': "232325352"
+
+				}
+			]
+		*/
+	}
+
 	public function addComment($pageId, $userId, $text)
 	{
 		$data = json_encode(

@@ -28,18 +28,32 @@ $user->setRoles($headerRoles);
 	<meta charset="utf-8">
 	<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 	<link href="/dashboard/stylesheets/all.css" rel="stylesheet" type="text/css" />
+	
 	
 </head>
 
 <body class="comments">
 
 	<div>
-		<?= $view->getHeader($user->isLogged(), $user->isModerator()) ?>
-		
-		<div>
-			<a href="/mongo/pages/sign-in.php">Sign in</a>
-		</div>
+		<?= $view->getHeader($user->isLogged(), $user->isModerator());
+			$view->renderHTML(); ?>
+		<?= 
+			$count = 20;
+			$offset = 0;
+			if($_GET){
+				$offset = $count * intval($_GET['page']);
+			}
+			$view->setAllComments($comments->getAllComments($count, $offset), $offset);
+			$view->renderHTML() ?>
+
+		<!--guziki-->	
+		<?= '<div class="comNavBts" style="width: max-content; margin: auto">
+				<a href="?page=' . ($_GET['page'] == 0 ? $_GET['page'] : $_GET['page']-1) . '"><button id="previousBt"><</button></a>
+				<a href="?page=' . $_GET['page']+1 . '"><button id="nextBt">></button></a>
+			</div>'
+		?>
 	</div>
 </body>
 

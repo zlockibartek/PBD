@@ -49,8 +49,9 @@ class View
 										<p class="commentUsername">' . $comment['eamil'] . '</p>
 										<p class="commentDate">' . $comment['timestamp'] . '</p>
 									</div>
-									<p class="commentText">' . $comment['text'] . '</p>
-							</li>';
+									<p class="commentText">' . $comment['text'] . '</p>';
+									$html .= $moderator ? '<input type="submit" class="deleteComment" Value="Delete">' : '';	
+							$html .= '</li>';
 			}
 		}
 		$html .= '</ul>
@@ -58,6 +59,38 @@ class View
         </div>';
 
 		$this->view .= $html;
+	}
+
+	public function setAllComments($content, $iter = 0)
+	{
+		$html = '<div style="width: 80vw; margin: auto">
+			<table class="table">
+			<thead>
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">User</th>
+				<th scope="col">Content</th>
+				<th scope="col">Page ID</th>
+				<th scope="col">Action</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>';
+		foreach ($content as $comment){
+			$html .= '<th scope="row">' . ++$iter . '</th>
+			<td style="width: 20%">' . $comment['eamil'] . '</td>
+			<td style="width: 100%"> <p>Text:' . $comment['text'] . '</p>
+				<p>Attachment:' . $this->displayAttachment($comment['attachment']). '</td>
+			<td>' . $comment['pageiD'] . '</td>
+			<td> <input type="submit" class="acceptCommentAll" Value="Accept"> <input type="submit" class="deleteCommentAll" Value="Delete"> </td>
+
+		  </tr>';
+		}
+		$html .= '</tbody>
+	  	</table>
+		</div>';
+
+		$this->view = $html;
 	}
 
 	public function getHeader($user = null, $moderator = null)
@@ -86,5 +119,15 @@ class View
       </nav>
       </div>';
 		return $html;
+	}
+	private function displayAttachment($source)
+	{
+		if($source){
+			if(mime_content_type($source)== "image/gif"){
+				return '<img style="max-width: 100px; max-height: 100px;" src=' . $source . '/>';
+			}
+			return '<p>' . $source . '</p>';
+		}
+		return '';
 	}
 }

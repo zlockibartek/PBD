@@ -46,7 +46,7 @@ if (!$page) {
     $title = 'Nie ma takiej strony';
   } else {
     $view->setPage($content['text']);
-    $view->setComments($commentsP);
+    $view->setComments($commentsP, null, $user->isModerator());
     $title = $content['title'];
   }
 }
@@ -72,7 +72,8 @@ if (!$page) {
   <link href="/dashboard/stylesheets/normalize.css" rel="stylesheet" type="text/css" />
   <link href="/dashboard/stylesheets/all.css" rel="stylesheet" type="text/css" />
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/3.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-
+  <link rel="stylesheet" href="tempsheet.css">
+  
   <script src="/dashboard/javascripts/modernizr.js" type="text/javascript"></script>
 
 
