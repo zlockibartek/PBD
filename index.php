@@ -40,16 +40,19 @@ if ($remove) {
   $user->removeComment($remove);
 }
 if ($_POST) {
-  $text = $_POST['send'];
-  $file = isset($_FILES['file']) ? $_FILES['file'] : '';
-  $fileName = isset($file) && $file['name'] ? $file['name'] : [];
-  $user->sendComment($text, $page, $fileName);
-  if ($file && $file['name']) {
-    $user->sendFile($file);
+  $text = isset($_POST['send']) ? $_POST['send'] : '';
+  $search = isset($_POST['search']) ? $_POST['search'] : '';
+  if ($text) {
+    $file = isset($_FILES['file']) ? $_FILES['file'] : '';
+    $fileName = isset($file) && $file['name'] ? $file['name'] : [];
+    $user->sendComment($text, $page, $fileName);
+    if ($file && $file['name']) {
+      $user->sendFile($file);
+    }
   }
 }
 if (!$page) {
-  $view->setGrid($pages->getPages($button));
+  $view->setGrid($pages->getPages($button, isset($search) ? $search : null));
 } else {
   $content = $singlePage->getPage($page);
   $commentsP = $comments->getComments($page);
@@ -85,7 +88,7 @@ if (!$page) {
   <link href="/dashboard/stylesheets/all.css" rel="stylesheet" type="text/css" />
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/3.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
   <link rel="stylesheet" href="tempsheet.css">
-  
+
   <script src="/dashboard/javascripts/modernizr.js" type="text/javascript"></script>
 
 
@@ -108,10 +111,15 @@ if (!$page) {
       <div class="large-12 columns">
         <h2>
           <?= $title ?>
-          <?php if (!$page): ?>
-          <a href="?button=popular"><button id="latest">Popular</button></a>
-          <a href="?button=last"><button id="popular">Latest</button></a>
-            <?php endif; ?>
+          <?php if (!$page) : ?>
+            <a href="?button=popular"><button id="latest">Popular</button></a>
+            <a href="?button=last"><button id="popular">Latest</button></a>
+            <form action="" method="POST">
+              <label for="site-search">Search the site:</label>
+              <input type="search" id="site-search" name="search" aria-label="Search through site content">
+              <input type="submit" value="Search">
+            </form>
+          <?php endif; ?>
         </h2>
       </div>
     </div>

@@ -10,7 +10,7 @@ class Pages
 	protected ?array $categories = null;
 
 
-	public function getPages($sort = null, $offset = null, $count = null, $title = null)
+	public function getPages($sort = null, $title = null, $offset = null, $count = null)
 	{
 		$data = json_encode(
 			array(

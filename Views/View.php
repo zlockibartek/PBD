@@ -69,7 +69,7 @@ class View
 									</div>
 									<p class="commentText">' . $comment['text'] . '</p>';
 									$html .= '<img style="max-width: 100px; max-height: 100px;" src=' . $file . '>';
-									$html .= $moderator ? '<a href="' . $_SERVER['REQUEST_URI'] . '&remove=' . $comment['timestamp'] . '"><button>Delete</button></a>' : '';	
+									$html .= $moderator ? '<a href="?page=' . $_GET['page'] . '&remove=' . $comment['timestamp'] . '"><button>Delete</button></a>' : '';	
 							$html .= '</li>';
 			}
 		}
@@ -80,29 +80,27 @@ class View
 		$this->view .= $html;
 	}
 
-	public function setAllComments($content, $iter = 0)
+	public function setLogs($content, $iter = 0)
 	{
 		$html = '<div style="width: 80vw; margin: auto">
 			<table class="table">
 			<thead>
 			<tr>
 				<th scope="col">#</th>
-				<th scope="col">User</th>
-				<th scope="col">Content</th>
-				<th scope="col">Page ID</th>
-				<th scope="col">Action</th>
+				<th scope="col">Id</th>
+				<th scope="col">Message</th>
+				<th scope="col">Type</th>
+				<th scope="col">Time</th>
 			</tr>
 			</thead>
 			<tbody>
 			<tr>';
-		foreach ($content as $comment){
+		foreach ($content as $log){
 			$html .= '<th scope="row">' . ++$iter . '</th>
-			<td style="width: 20%">' . $comment['eamil'] . '</td>
-			<td style="width: 100%"> <p>Text:' . $comment['text'] . '</p>
-				<p>Attachment:' . $this->displayAttachment($comment['attachment']). '</td>
-			<td>' . $comment['pageiD'] . '</td>
-			<td> <input type="submit" class="acceptCommentAll" Value="Accept"> <input type="submit" class="deleteCommentAll" Value="Delete"> </td>
-
+			<td style="width: 20%">' . $log['_id'] . '</td>
+			<td style="width: 100%"> <p>' . $log['message'] . '</p>
+			<td>' . $log['actionType'] . '</td>
+			<td>' . $log['createTime'] . '</td>
 		  </tr>';
 		}
 		$html .= '</tbody>
@@ -132,7 +130,7 @@ class View
     <li class=""><a href="/mongo/pages/login.php?action=logout"">Logout</a></li>' : '';
 		$html .= !$user ? '<li class=""><a href="/mongo/pages/login.php">Login</a></li>
       <li class=""><a href="/mongo/pages/sign-in.php">Sign in</a></li>' : '';
-		$html .= $moderator ? '<li class=""><a href="/mongo/pages/comments.php">Comments</a></li>' : '';
+		$html .= $moderator ? '<li class=""><a href="/mongo/pages/logs.php">Logs</a></li>' : '';
 		$html .= '</ul>
       </section>
       </nav>
@@ -149,4 +147,5 @@ class View
 		}
 		return '';
 	}
+
 }

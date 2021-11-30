@@ -13,6 +13,7 @@ class User
 	const API_COMMENT = 'http://10.99.2.20:5000/users/comment';
 	const API_FILE = 'http://10.99.2.20:5000/users/upload';
 	const API_REMOVE = 'http://10.99.2.20:5000/users/deletecomment';
+	const API_LOGS = 'http://10.99.2.20:5000/users/logs';
 
 	private string $roles;
 	private ?int $id;
@@ -117,7 +118,8 @@ class User
 		echo '</pre>';
 	}
 
-	public function sendPage($title) {
+	public function sendPage($title)
+	{
 		$data = json_encode(
 			array(
 				'title' => $title,
@@ -136,10 +138,11 @@ class User
 		$status = json_decode(file_get_contents(self::API_PAGE, false, $context), true);
 	}
 
-	public function removeComment($timestamp) {
+	public function removeComment($timestamp)
+	{
 		$data = json_encode(
 			array(
-				'timestamp' => $timestamp,
+				'timestamp' => intval($timestamp),
 			)
 		);
 		$options = array(
@@ -153,9 +156,26 @@ class User
 
 		$context = stream_context_create($options);
 		$status = json_decode(file_get_contents(self::API_REMOVE, false, $context), true);
-		echo '<pre>';
-		var_dump($status);
-		echo '</pre>';
+	}
+
+	public function getLogs()
+	{
+		$data = json_encode(
+			array(
+				'count' => 10,
+			)
+		);
+		$options = array(
+			'http' => array(
+				'header'  => "Content-type: application/json\r\n" .
+					"Cookie:" . explode('set-cookie:', $this->cookies)[1] . "\r\n",
+				'method'  => 'POST',
+				'content' => $data
+			)
+		);
+		$context = stream_context_create($options);
+		$status = json_decode(file_get_contents(self::API_LOGS, false, $context), true);
+		return $status;
 	}
 
 	public function sendFile($file)
