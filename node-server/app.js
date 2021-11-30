@@ -7,21 +7,27 @@ import passport from 'passport';
 import LocalStrategy from 'passport-local'
 import flash from 'connect-flash';
 import session from 'express-session';
-import dbManager from "./lib/db.js";
+import { DBManager, newPage } from "./lib/db.js";
 import bcrypt from "bcrypt";
 import { router as indexRouter } from "./routes/index.js"
 import { router as userRouter } from "./routes/users.js"
-import { ObjectId } from 'mongodb';
-await dbManager.init();
+import { router as queryRouter } from "./routes/query.js"
+import { ObjectId, Binary } from 'mongodb';
+
 const app = express();
 import * as swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
-
+import bodyParser from "body-parser"
+import * as pages from "./scripts/getPages.js"
 import busboy from 'connect-busboy'; //middleware for form/file upload
 // var path = require('path');     //used for file path
-import fs from 'fs-extra';  
+import fs from 'fs-extra';
+const dbManager = new DBManager();
+await dbManager.init();
 
-app.use(busboy()); 
+import secretConfig from "./config/keys.json";
+const { collections } = secretConfig;
+app.use(busboy());
 passport.serializeUser(function (user, done) {
   done(null, user._id);
 });
@@ -69,11 +75,16 @@ async function auth(email, password, done) {
 const db = await dbManager.db();
 // EJS
 app.use(expressLayouts);
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(bodyParser.json())
+app.use(bodyParser.json())
 app.set('view engine', 'ejs');
 
 // Express body parser
 app.use(express.urlencoded({ extended: true }));
-
+app.use("/img", express.static("/home/bartek/git/PBD/node-server/img/"))
 // Express session
 const oneDay = 1000 * 60 * 60 * 24;
 
@@ -99,50 +110,309 @@ const options = {
     },
   },
   // List of files to be processes. You can also set globs './routes/*.js'
-  apis: ['node-server/routes/*.js','node-server/app.js'],
+  apis: ['node-server/routes/*.js', 'node-server/app.js']
 };
 app.use('/', indexRouter);
 app.use('/users', userRouter);
+app.use('/query', queryRouter);
 const specs = swaggerJsdoc(options);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
+
+
+
 /**
  * @swagger
- * /upload:
+ * /wiki-page:
  *   post:
- *       descripton: Uploads a file.
- *       consumes: 
- *          - multipart/form-data
+ *       descripton: Returns a wiki page.
+ *       content: 
+ *          application/x-www-form-urlencoded
  *       parameters:
- *          - in: formData
- *            name: upfile
- *            type: file
+ *          - in: body
+ *            name: a
+ *            schema:
+ *              $ref: '#/definitions/Wikipage'
  *       responses:
  *           200:
- *               description: Sucesfull login
+ *               description: Sending page
  *           401:
- *               description: Cant login
+ *               description: Sending null
  *               content:
  *                   application/json:
  *               schema:
  *                   type: object
- */
-app.post('/upload',function (req, res, next) {
-  var fstream;
-  req.pipe(req.busboy);
-  req.busboy.on('file', function (fieldname, file, filename) {
-      console.log("Uploading: " + filename);
+ * */
+app.post('/wiki-page', async (req, res, next) => {
+  // console.log(req.body)
+  try {
+    const page = await pages.wikiPageRequest(req.body);
+    console.log(page);
+    if (!page["error"]) {
+      res.status(200).send(page);
+      // await uploadCategory({title:req.body["title"],childreen:page.categories})
+    }
+    else
+      res.status(401).send(page);
+  } catch (e) { next(e) }
 
-      //Path where image will be uploaded
-      fstream = fs.createWriteStream('node-server/img/' + filename);
-      file.pipe(fstream);
-      fstream.on('close', function () {    
-          console.log("Upload Finished of " + filename);              
-          res.redirect('back');           //where to go next
-      });
+})
+/**
+ * @swagger
+ * /wiki-category:
+ *   post:
+ *       descripton: Returns a wiki page.
+ *       content: 
+ *          application/x-www-form-urlencoded
+ *       parameters:
+ *          - in: body
+ *            name: a
+ *            schema:
+ *              $ref: '#/definitions/Wikicategory'
+ *       responses:
+ *           200:
+ *               description: Sending page
+ *           401:
+ *               description: Sending null
+ *               content:
+ *                   application/json:
+ *               schema:
+ *                   type: object
+ * */
+app.post('/wiki-category', async (req, res, next) => {
+  console.log(req.body)
+  try {
+    const page = await pages.insideCategory(req.body);
+    console.log(page);
+    res.status(200).send(page);
+    // await uploadCategory({ title: req.body["category"], childreen: page.categories })
+    // await uploadPages({ title: req.body["category"], pages: page.pages })
+  } catch (e) { next(e) }
+
+})
+/**
+ * @swagger
+ * /wiki-comments:
+ *   post:
+ *       descripton: Returns a wiki page.
+ *       content: 
+ *          application/x-www-form-urlencoded
+ *       parameters:
+ *          - in: body
+ *            name: a
+ *            schema:
+ *              $ref: '#/definitions/Wikicomment'
+ *       responses:
+ *           200:
+ *               description: Sending page
+ *           401:
+ *               description: Sending null
+ *               content:
+ *                   application/json:
+ *               schema:
+ *                   type: object
+ * */
+app.post('/wiki-comments', async (req, res, next) => {
+  console.log(req.body)
+  try {
+    const page = await pages.userComments(req.body);
+    console.log(page);
+    res.status(200).send(page);
+    // await uploadCategory({title:req.body["category"],childreen:page.categories})
+    // await uploadPages({title:req.body["category"],pages:page.pages})
+  } catch (e) { next(e) }
+
+})
+/**
+ * @swagger
+ * /wiki-pagecategory:
+ *   post:
+ *       descripton: Returns a wiki page.
+ *       content: 
+ *          application/x-www-form-urlencoded
+ *       parameters:
+ *          - in: body
+ *            name: a
+ *            schema:
+ *              $ref: '#/definitions/Wikipagecategory'
+ *       responses:
+ *           200:
+ *               description: Sending page
+ *           401:
+ *               description: Sending null
+ *               content:
+ *                   application/json:
+ *               schema:
+ *                   type: object
+ * */
+app.post('/wiki-pagecategory', async (req, res, next) => {
+  console.log(req.body)
+  const db = await dbManager.db();
+  // const col = db.collection(collections.comments);
+  const forum = db.collection(collections.forums);
+  const pages = db.collection(collections.pages);
+  // forum.find().forEach(async function (doc) {
+  //   // console.log(doc);
+  //   try {
+  //     if (doc.pageid) {
+  //       if (await pages.findOne({ pageId: doc.pageid }) == null)
+  //         await addCategogoriesByPageid(doc.pageid);
+  //     }
+  //   } catch (e) { console.log("e", e) }
+  // })
+  res.status(200).send("");
+  try {
+    // addCategogoriesByPageid(req.body["pageid"]);
+
+    // console.log(page);
+
+    // console.log(page);
+    // res.status(200).send(page);
+    // await uploadCategory({title:req.body["category"],childreen:page.categories})
+    // await uploadPages({title:req.body["category"],pages:page.pages})
+  } catch (e) { next(e) }
+
+
+})
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+async function addCategogoriesByPageid(pageid) {
+  await delay(1000);
+  const { categories } = await pages.pageCategries({ "pageid": pageid });
+  categories.filter(elem => { elem["ns"] == 14 })
+  // const {comments} = await pages.userComments(req.body);
+  for (let k in categories) {
+    let title = categories[k].title.substring(9)
+    const page = await pages.insideCategory({ category: title });
+    console.log(title, page);
+    // res.status(200).send(page);
+    if (page.pages.length > 0)
+      await uploadPages({ title: title, pages: page.pages });
+    if (page.categories.length > 0)
+      await uploadCategory({ title: title, childreen: page.categories });
+
+  };
+}
+async function uploadCategory({ title: categoryName, childreen: childreen }) {
+  let pageId;
+  const page = await pages.wikiPageRequest({ title: categoryName });
+  if (!page["error"]) {
+    pageId = page["parse"]["pageid"]
+    // await newCategory(pageId, categoryName, childreen)
+  }
+}
+async function uploadPages({ title: categoryName, pages: pages }) {
+  // const page = await pages.wikiPageRequest({title:categoryName});
+  pages.forEach(page => {
+
+    newPage(page.title, page.pageid, categoryName)
   });
-});
-
+}
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, console.log(`Server running on  ${PORT}`));
+/**
+ * @swagger
+ * definitions:
+ *    User:
+ *      properties:
+ *        email:
+ *          default: a@a
+ *          type: string
+ *        password:
+ *          default: PH6bGEXDTd6RZ8h
+ *          type: string
+ *      required:
+ *       - email
+ *       - password
+ *    Comment:
+ *      properties:
+ *        email:
+ *          default: a@a
+ *          type: string
+ *        text:
+ *          default: abcdefghijklm
+ *          type: string
+ *        pageid:
+ *          type: number
+ *          default: 2954706
+ *        attachements:
+ *            type: string
+ *            default:
+ *              - kitty.jpg
+ *              - kitty2.jpg
+ *    Page:
+ *      properties:
+ *        id:
+ *          type: string
+ *          enum:
+ *            - user
+ *            - page
+ *        name:
+ *          type: string
+ *         # Both properties are required
+ *        required:
+ *         - id
+ *         - name
+ *    Wikipage:
+ *      properties:
+ *        pageid:
+ *          type: number
+ *        title:
+ *          type: string
+ *    Wikicategory:
+ *      properties:
+ *        category:
+ *          type: string
+ *    Wikicomment:
+ *      properties:
+ *        user:
+ *          type: string
+ *    Wikipagecategory:
+ *      properties:
+ *        pageid:
+ *          type: string
+ *    Querypage:
+ *      properties:
+ *        title:
+ *          type: string
+ *        category:
+ *          type: string
+ *        sort:
+ *          type: string
+ *          enum:
+ *            - asc
+ *            - desc
+ *            - newest
+ *        offset:
+ *          type: number
+ *        count:
+ *          type: number
+ *    Querycategory:
+ *      properties:
+ *        category:
+ *          type: string 
+ *        offset:
+ *          type: number
+ *        count:
+ *          type: number
+ *    Querylog:
+ *      properties:
+ *        offset:
+ *          type: number
+ *        count:
+ *          type: number
+ *    Querycomment:
+ *      properties:
+ *        pageid:
+ *          type: number
+ *          default: 52435000
+ *        count:
+ *          type: number
+ *          default: 10
+ *        offset:
+ *          type: number
+ *    Deletecomment:
+ *      properties:
+ *        timestamp:
+ *          type: number
+ */

@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import express from 'express';
 import passport from 'passport';
-import {pageQueryCategory, pageQueryTitle} from ".././lib/db.js";
+import { commentQueryByPageId, pageQuerySimilarBySameCategory, pageQuerySimilarByTitle, pageQueryLast, pageQueryPopular, logQueryLatest } from ".././lib/db.js";
 // import { ensureAuthenticated, forwardAuthenticated } from ".././config/auth.js";
 const router = express.Router();
 /**
@@ -15,7 +15,7 @@ const router = express.Router();
  *          - in: body
  *            name: a
  *            schema:
- *              $ref: '#/definitions/Querypage'
+ *              $ref: '#/definitions/Querypage' 
  *       responses:
  *           200:
  *               description: Sucesfull login
@@ -27,23 +27,19 @@ const router = express.Router();
  *                   type: object
  * */
 router.post('/pages', async (req, res, next) => {
-    console.log(req.body);
+    console.log("/pages", req.body);
+    // await filtrPages();
     var documents = []
-    if(req.body["title"])
-        documents = await pageQueryTitle(req.body.title,req.body["offset"],req.body["count"]);
-    else if(req.body["category"])
-        documents = await pageQueryCategory(req.body.category,req.body["offset"],req.body["count"]);
-    else {}
+    if (req.body["title"])
+        documents = await pageQuerySimilarByTitle(req.body.title, req.body["offset"], req.body["count"]);
+    else if (req.body["category"])
+        documents = await pageQuerySimilarBySameCategory(req.body.category, req.body["offset"], req.body["count"]);
+    else if (req.body["sort"] == "last")
+        documents = await pageQueryLast(req.body["offset"], req.body["count"]);
+    else if (req.body["sort"] == "popular")
+        documents = await pageQueryPopular(req.body["offset"], req.body["count"]);
+    else { }
     res.status(200).send(documents);
-    // try{
-    //   const page = await pages.wikiPageRequest(req.body);
-    //   console.log(page);
-    //   if (!page){
-    //     res.status(200).send(page);
-    //   }
-    //   else
-    //     res.status(401).send(page);
-    // }catch(e){next(e)}
 
 })
 /**
@@ -69,21 +65,14 @@ router.post('/pages', async (req, res, next) => {
  *                   type: object
  * */
 router.post('/comments', async (req, res, next) => {
-    console.log(req.body);
-    res.status(200).send("");
-    // try{
-    //   const page = await pages.wikiPageRequest(req.body);
-    //   console.log(page);
-    //   if (!page){
-    //     res.status(200).send(page);
-    //   }
-    //   else
-    //     res.status(401).send(page);
-    // }catch(e){next(e)}
-
+    var documents = []
+    console.log("/comments", req.body)
+    if (req.body["pageid"])
+        documents = await commentQueryByPageId(req.body.pageid, req.body["offset"], req.body["count"]); //TODO
+    else { }
+    res.status(200).send(documents);
 })
 /**
- * @swagger
  * /query/categories:
  *   post:
  *       descripton: Returns list of pages.
@@ -104,18 +93,23 @@ router.post('/comments', async (req, res, next) => {
  *               schema:
  *                   type: object
  * */
-router.post('/categories', async (req, res, next) => {
-    console.log(req.body);
-    res.status(200).send("");
-    // try{
-    //   const page = await pages.wikiPageRequest(req.body);
-    //   console.log(page);
-    //   if (!page){
-    //     res.status(200).send(page);
-    //   }
-    //   else
-    //     res.status(401).send(page);
-    // }catch(e){next(e)}
-
-})
+/*router.post('/categories', async (req, res, next) => {
+    console.log(req.body)
+    var documents = []
+    if (req.body["categoryid"] > 0){
+        // documents = await categoryQueryGetChildreenById(req.body.categoryid, req.body["offset"], req.body["count"])
+    }
+    // else if (req.body["category"] != "all")
+        // documents = await categoryQueryGetChildreen(req.body.category, req.body["offset"], req.body["count"]); //TODO
+    else if (req.body["categoryid"] == 0){}
+        // documents = await categoryQueryAll(req.body["offset"], req.body["count"]); //TODO
+    else { }
+    if (documents) {
+        documents.map(el => {
+            if (el.title.indexOf("Category:") > -1)
+                el.title = el.title.substring(9);
+        })
+    }
+    res.status(200).send(documents);
+})*/
 export { router };
