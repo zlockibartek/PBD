@@ -35,15 +35,16 @@ $view = new View();
 $commentsView = new View();
 $button = isset($_GET['button']) ? $_GET['button'] : null;
 $page = isset($_GET['page']) ? $_GET['page'] : '';
+$remove = isset($_GET['remove']) ? $_GET['remove'] : '';
+if ($remove) {
+  $user->removeComment($remove);
+}
 if ($_POST) {
   $text = $_POST['send'];
   $file = isset($_FILES['file']) ? $_FILES['file'] : '';
   $fileName = isset($file) && $file['name'] ? $file['name'] : [];
   $user->sendComment($text, $page, $fileName);
   if ($file && $file['name']) {
-    echo '<pre>';
-    var_dump($file);
-    echo '</pre>';
     $user->sendFile($file);
   }
 }
@@ -107,7 +108,6 @@ if (!$page) {
       <div class="large-12 columns">
         <h2>
           <?= $title ?>
-          <!-- <video src="//10.99.2.20:5000/img/kitty.mp4" autoplay poster="posterimage.jpg"> -->
           <?php if (!$page): ?>
           <a href="?button=popular"><button id="latest">Popular</button></a>
           <a href="?button=last"><button id="popular">Latest</button></a>

@@ -1,70 +1,75 @@
 /*Frame*/
+
 #mainIFrame {
     width: 100%;
     height: 100%;
 }
-#frameContainer{
+
+#frameContainer {
     width: 90%;
-    height: 90vh; /*Do zmiany wysokości iframa*/
+    height: 90vh;
+    /*Do zmiany wysokości iframa*/
     margin: auto;
     border: 2px solid red;
 }
 
+
 /*Comments*/
 
-#commentsBox{
+#commentsBox {
     width: 90%;
     margin: auto;
-    border: 2px solid blue;
 }
 
-#makeCommentBox{
-    border: 2px solid blue;
+#makeCommentBox {
+    border: 2px solid rgb(0, 0, 0);
 }
-#makeCommentText{
+
+#makeCommentText {
     max-width: 90%;
 }
 
-#makeCommentFiles{
+#makeCommentFiles {
     display: flex;
     flex-direction: column;
 }
 
-#makeCommentSubmit{
+#makeCommentSubmit {
     align-self: right;
 }
 
-#commentsListBox{
-    border: 2px solid blue;
+#commentsListBox {
+    border: 2px solid rgba(0, 0, 0, 0.664);
     display: flex;
     flex-direction: column;
-
 }
 
-#commentList{
-    border: 2px solid blue;
+#commentList {
     padding-left: 0;
     list-style-type: none;
-
 }
 
-.commentBox{
-    border: 2px solid rgb(0, 255, 191);
+.commentBox {
+    border: 2px solid rgb(0, 250, 187);
+    border-radius: 25px;
     display: flex;
     flex-direction: column;
-
 }
-.commentCred{
+
+.commentCred {
     height: 2em;
     margin-left: 10px;
     margin-right: 10px;
     display: flex;
     justify-content: space-between;
 }
-.commentText{
+
+.commentText {
     min-height: 40px;
-    border: 1px solid red;
+    border: 2px dotted rgba(0, 0, 0, 0.664);
 }
+
+
 /*
 .commentImage{
     max-height: 30vh;
@@ -72,9 +77,7 @@
     
 }*/
 
-
-.commentBox > img {
+.commentBox>img {
     max-height: 30vh;
     align-self: center;
 }
-

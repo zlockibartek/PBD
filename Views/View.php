@@ -58,7 +58,7 @@ class View
             <div id="commentsListBox">
                 <ul id="commentList">';
 		if ($content) {
-			$date = new DateTime();
+
 			foreach ($content as $comment) {
 				$file = isset($comment['attachements']) && $comment['attachements'] ? self::SERVER . $comment['attachements'][0] : '';
 				$html .= '<li>
@@ -68,8 +68,8 @@ class View
 										<p class="commentDate">' . date('Y-m-d H:i:s', $comment['timestamp']/1000) . '</p>
 									</div>
 									<p class="commentText">' . $comment['text'] . '</p>';
-									$html .= '<img style="max-width: 100px; max-height: 100px;" src=' . $file . '/>';
-									$html .= $moderator ? '<input type="submit" class="deleteComment" Value="Delete">' : '';	
+									$html .= '<img style="max-width: 100px; max-height: 100px;" src=' . $file . '>';
+									$html .= $moderator ? '<a href="' . $_SERVER['REQUEST_URI'] . '&remove=' . $comment['timestamp'] . '"><button>Delete</button></a>' : '';	
 							$html .= '</li>';
 			}
 		}

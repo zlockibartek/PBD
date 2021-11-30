@@ -12,6 +12,7 @@ class User
 	const API_REGISTER = 'http://10.99.2.20:5000/users/register';
 	const API_COMMENT = 'http://10.99.2.20:5000/users/comment';
 	const API_FILE = 'http://10.99.2.20:5000/users/upload';
+	const API_REMOVE = 'http://10.99.2.20:5000/users/deletecomment';
 
 	private string $roles;
 	private ?int $id;
@@ -133,6 +134,28 @@ class User
 
 		$context = stream_context_create($options);
 		$status = json_decode(file_get_contents(self::API_PAGE, false, $context), true);
+	}
+
+	public function removeComment($timestamp) {
+		$data = json_encode(
+			array(
+				'timestamp' => $timestamp,
+			)
+		);
+		$options = array(
+			'http' => array(
+				'header'  => "Content-type: application/json\r\n" .
+					"Cookie:" . explode('set-cookie:', $this->cookies)[1] . "\r\n",
+				'method'  => 'POST',
+				'content' => $data
+			)
+		);
+
+		$context = stream_context_create($options);
+		$status = json_decode(file_get_contents(self::API_REMOVE, false, $context), true);
+		echo '<pre>';
+		var_dump($status);
+		echo '</pre>';
 	}
 
 	public function sendFile($file)
