@@ -68,8 +68,8 @@ class View
 										<p class="commentDate">' . date('Y-m-d H:i:s', $comment['timestamp']/1000) . '</p>
 									</div>
 									<p class="commentText">' . $comment['text'] . '</p>';
-									$html .= '<img style="max-width: 100px; max-height: 100px;" src=' . $file . '>';
-									$html .= $moderator ? '<a href="' . $_SERVER['REQUEST_URI'] . '&remove=' . $comment['timestamp'] . '"><button>Delete</button></a>' : '';	
+									$html .= $this->displayAttachment($file);
+									$html .= $moderator ? '<a href="' . $_SERVER['REQUEST_URI'] . '&remove=' . $comment['timestamp'] . '"><button>Delete</button></a>' : '';
 							$html .= '</li>';
 			}
 		}
@@ -142,10 +142,17 @@ class View
 	private function displayAttachment($source)
 	{
 		if($source){
-			if(mime_content_type($source)== "image/gif"){
-				return '<img style="max-width: 100px; max-height: 100px;" src=' . $source . '/>';
+			if(strpos($source, ".mp4")){
+				return '<video src=' . $source . ' autoplay loop>';
 			}
-			return '<p>' . $source . '</p>';
+			return '<img style="max-width: 100px; max-height: 100px;" src=' . $source . '>';
+			/*if(fnmatch(mime_content_type($source), "image/*")){
+				return '<img style="max-width: 100px; max-height: 100px;" src=' . $source . '>';
+			}
+			if(fnmatch(mime_content_type($source), "video/*")){
+				return '<video src=' . $source . 'autoplay >';
+			}
+			return '<p>' . $source . '</p>';*/
 		}
 		return '';
 	}
