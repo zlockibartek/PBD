@@ -113,9 +113,6 @@ class User
 
 		$context = stream_context_create($options);
 		$status = json_decode(file_get_contents(self::API_COMMENT, false, $context), true);
-		echo '<pre>';
-		var_dump($status);
-		echo '</pre>';
 	}
 
 	public function sendPage($title)

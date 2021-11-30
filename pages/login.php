@@ -17,23 +17,13 @@ $headerRoles = isset($_COOKIE['roles']) ? $_COOKIE['roles'] : '';
 $user->setCookies($headerCookies);
 $user->setRoles($headerRoles);
 
-if (isset($_GET['action'])&& !$_POST) {
+if (isset($_GET['action']) && !$_POST) {
 	$user->logOut();
-	echo '<pre>';
-	var_dump('Zostałeś wylogowany');
-	echo '</pre>';
 }
 
 if ($_POST) {
 	if (!$headerCookies) {
 		$user->logIn($_POST['username'], $_POST['password']);
-		echo '<pre>';
-		var_dump('Zalogowano');
-		echo '</pre>';
-	} else {
-		echo '<pre>';
-		var_dump('Jesteś już zalogowany');
-		echo '</pre>';
 	}
 }
 ?>

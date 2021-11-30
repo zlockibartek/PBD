@@ -66,11 +66,12 @@ class View
 									<div class="commentCred">
 										<p class="commentUsername">' . $comment['eamil'] . '</p>
 										<p class="commentDate">' . date('Y-m-d H:i:s', $comment['timestamp']/1000) . '</p>
-									</div>
+									</div><div>
 									<p class="commentText">' . $comment['text'] . '</p>';
-									$html .= '<img style="max-width: 100px; max-height: 100px;" src=' . $file . '>';
+									$html .= $this->displayAttachment($file);
+									$html .= '</div><div>';
 									$html .= $moderator ? '<a href="?page=' . $_GET['page'] . '&remove=' . $comment['timestamp'] . '"><button>Delete</button></a>' : '';	
-							$html .= '</li>';
+							$html .= '</div></li>';
 			}
 		}
 		$html .= '</ul>
@@ -100,7 +101,7 @@ class View
 			<td style="width: 20%">' . $log['_id'] . '</td>
 			<td style="width: 100%"> <p>' . $log['message'] . '</p>
 			<td>' . $log['actionType'] . '</td>
-			<td>' . $log['createTime'] . '</td>
+			<td>' . date('Y-m-d H:i:s',$log['createTime']/1000) . '</td>
 		  </tr>';
 		}
 		$html .= '</tbody>
@@ -138,21 +139,14 @@ class View
 		return $html;
 	}
 	private function displayAttachment($source)
-	{
-		if($source){
-			if(strpos($source, ".mp4")){
-				return '<video src=' . $source . ' autoplay loop>';
-			}
-			return '<img style="max-width: 100px; max-height: 100px;" src=' . $source . '>';
-			/*if(fnmatch(mime_content_type($source), "image/*")){
-				return '<img style="max-width: 100px; max-height: 100px;" src=' . $source . '>';
-			}
-			if(fnmatch(mime_content_type($source), "video/*")){
-				return '<video src=' . $source . 'autoplay >';
-			}
-			return '<p>' . $source . '</p>';*/
-		}
-		return '';
-	}
+    {
+        if($source){
+            if(strpos($source, ".mp4")){
+                return '<video src=' . $source . ' autoplay loop>';
+            }
+            return '<img style="max-width: 100px; max-height: 100px;" src=' . $source . '>';
+        }
+        return '';
+    }
 
 }
