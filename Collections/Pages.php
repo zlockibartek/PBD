@@ -29,13 +29,13 @@ class Pages
 			)
 		);
 
-		$context = stream_context_create($options);
-		$pages = json_decode(file_get_contents(self::API, false, $context), true);
-		$result = array(
-			'content' => $pages,
-			'type' => 'page',
-		);
+		// $context = stream_context_create($options);
+		// $pages = json_decode(file_get_contents(self::API, false, $context), true);
+		// $result = array(
+		// 	'content' => $pages,
+		// 	'type' => 'page',
+		// );
 
-		return $result;
+		return [];//$result;
 	}
 }

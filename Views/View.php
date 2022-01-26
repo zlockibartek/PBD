@@ -16,13 +16,13 @@ class View
 	public function setGrid($content)
 	{
 		$html = '<div class="row hidden-md-up postsGridWrap">';
-		foreach ($content['content'] as $category) :
-		$category['url'] = "index.php?" . $content['type'] . "=" . $category['pageId'];
+		foreach ($content as $page) :
+		$url = "index.php?page=" . $page->getId();
 		$html .= '<div class="col-md-' . self::PERCOL .' mb-2 mt-2">
 			<div class="posts-card m-auto">
-				<a href="' . $category['url'] . '">
+				<a href="' . $url . '">
 					<div class="card-body p-2">
-						<h5 class="card-title">' . $category['title'] . '</h5>
+						<h5 class="card-title">' . $page->getTitle() . '</h5>
 					</div>
 				</a>
 			</div>
@@ -58,7 +58,6 @@ class View
             <div id="commentsListBox">
                 <ul id="commentList">';
 		if ($content) {
-
 			foreach ($content as $comment) {
 				$file = isset($comment['attachements']) && $comment['attachements'] ? self::SERVER . $comment['attachements'][0] : '';
 				$html .= '<li>

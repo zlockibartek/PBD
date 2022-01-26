@@ -8,6 +8,7 @@ use Home\Collections\Comments;
 use Home\Collections\Pages;
 use Home\Collections\SinglePage;
 use Home\Collections\User;
+use Home\DBManager\DBManager as DBManagerDBManager;
 use Home\Views\View;
 
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/Categories.php');
@@ -15,13 +16,20 @@ include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/Pages.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/Comments.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/SinglePage.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/User.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/mongo/DBManager/Tables/User.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Views/View.php');
+require_once('C:\xampp\htdocs\mongo\DBManager\DBManager.php');
+
+$dbManager = new DBManagerDBManager();
+$dbManager->getPages();
+$em = $dbManager->entityManager;
 
 $categories = new Categories();
 $comments = new Comments();
 $singlePage = new SinglePage();
 $pages = new Pages();
 $user = new User();
+
 // $file = $_POST ? $_POST['commentFile'] : '';
 
 $headerCookies = isset($_COOKIE['header_cookies']) ? $_COOKIE['header_cookies'] : '';
@@ -36,6 +44,7 @@ $commentsView = new View();
 $button = isset($_GET['button']) ? $_GET['button'] : null;
 $page = isset($_GET['page']) ? $_GET['page'] : '';
 $remove = isset($_GET['remove']) ? $_GET['remove'] : '';
+$search = null;
 if ($remove) {
   $user->removeComment($remove);
 }
@@ -52,7 +61,7 @@ if ($_POST) {
   }
 }
 if (!$page) {
-  $view->setGrid($pages->getPages($button, isset($search) ? $search : null));
+  $view->setGrid($dbManager->getPages($button, $search));
 } else {
   $content = $singlePage->getPage($page);
   $commentsP = $comments->getComments($page);
