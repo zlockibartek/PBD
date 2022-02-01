@@ -4,15 +4,18 @@ namespace Home\Pages;
 
 use Home\Collections\Comments;
 use Home\Collections\User;
+use Home\DBManager\DBManager;
 use Home\Views\View;
 
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/Comments.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/User.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Views/View.php');
+require_once('C:\xampp\htdocs\mongo\DBManager\DBManager.php');
 
 $comments = new Comments();
 $view = new View();
 $user = new User();
+$dbManager = new DBManager();
 
 $headerCookies = isset($_COOKIE['header_cookies']) ? $_COOKIE['header_cookies'] : '';
 $headerRoles = isset($_COOKIE['roles']) ? $_COOKIE['roles'] : '';
@@ -40,7 +43,7 @@ $user->setRoles($headerRoles);
 		<?= $view->getHeader($user->isLogged(), $user->isModerator());
 		$view->renderHTML(); ?>
 		<?php
-		$view->setLogs($user->getLogs());
+		$view->setLogs($dbManager->getLogs());
 		$view->renderHTML()
 		?>
 	</div>

@@ -17,13 +17,15 @@ class User
 
 	private string $roles;
 	private ?int $id;
+	private ?string $username;
 	private $cookies;
 
 
-	public function __construct($id = null, $roles = '')
+	public function __construct($id = null, $roles = '', $username = '')
 	{
 		$this->id = $id;
 		$this->roles = $roles;
+		$this->username = $username;
 	}
 
 	public function logIn($login = '', $password = '')
@@ -78,6 +80,7 @@ class User
 	{
 		setcookie('header_cookies', '', '1', '/');
 		setcookie('roles', '', '1', '/');
+		setcookie('username', '', 1, '/');
 	}
 
 	public function sendComment($text, $pageId, $attachment)

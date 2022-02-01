@@ -34,6 +34,8 @@ $user = new User();
 
 $headerCookies = isset($_COOKIE['header_cookies']) ? $_COOKIE['header_cookies'] : '';
 $headerRoles = isset($_COOKIE['roles']) ? $_COOKIE['roles'] : '';
+$username = isset($_COOKIE['username']) ? $_COOKIE['username'] : '';
+$email = isset($_COOKIE['email']) ? $_COOKIE['email'] : '';
 $user->setCookies($headerCookies);
 $user->setRoles($headerRoles);
 
@@ -46,7 +48,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
 $remove = isset($_GET['remove']) ? $_GET['remove'] : '';
 $search = null;
 if ($remove) {
-  $user->removeComment($remove);
+  $dbManager->removeComment($remove);
 }
 if ($_POST) {
   $text = isset($_POST['send']) ? $_POST['send'] : '';
@@ -55,7 +57,7 @@ if ($_POST) {
     $file = isset($_FILES['file']) ? $_FILES['file'] : '';
     $fileName = isset($file) && $file['name'] ? $file['name'] : '';
     // $user->sendComment($text, $page, $fileName);
-    $dbManager->sendComment($text, 'test', 'test', $page, $fileName);
+    $dbManager->sendComment($text, $username, $email, $page, $fileName);
     if ($file && $file['name']) {
       $user->sendFile($file);
     }
@@ -71,10 +73,9 @@ if (!$page) {
     $view->setPage('');
     $title = 'Nie ma takiej strony';
   } else {
-    $content = $content[0];
-    $view->setPage($content->getContent());
+    $view->setPage($content['text']);
     $view->setComments($commentsP, null, $user->isModerator());
-    $title = $content->getTitle();
+    $title = $content['title'];
   }
 }
 

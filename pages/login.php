@@ -4,13 +4,16 @@ namespace Home\Pages;
 
 use Home\Collections\User;
 use Home\Helpers\Helper;
+use Home\DBManager\DBManager;
 use Home\Views\View;
 
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/User.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Views/View.php');
+require_once('C:\xampp\htdocs\mongo\DBManager\DBManager.php');
 
 $user = new User();
 $view = new View();
+$dbManager = new DBManager();
 
 $headerCookies = isset($_COOKIE['header_cookies']) ? $_COOKIE['header_cookies'] : '';
 $headerRoles = isset($_COOKIE['roles']) ? $_COOKIE['roles'] : '';
@@ -23,7 +26,7 @@ if (isset($_GET['action']) && !$_POST) {
 
 if ($_POST) {
 	if (!$headerCookies) {
-		$user->logIn($_POST['username'], $_POST['password']);
+		$dbManager->login($_POST['username'], $_POST['password']);
 	}
 }
 ?>
@@ -48,7 +51,7 @@ if ($_POST) {
 		<?= $view->getHeader($user->isLogged(), $user->isModerator()) ?>
 		<form action="" name="login" method="POST">
 			<div>
-				<label for="username">Username:</label>
+				<label for="username">Email:</label>
 				<input type="text" id="username" name="username" required>
 			</div>
 			<div>

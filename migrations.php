@@ -1,5 +1,4 @@
 <?php
-
 return [
     'table_storage' => [
         'table_name' => 'doctrine_migration_versions',
@@ -10,8 +9,8 @@ return [
     ],
 
     'migrations_paths' => [
-        'MyProject\Migrations' => '/data/doctrine/migrations/lib/MyProject/Migrations',
-        'MyProject\Component\Migrations' => './Component/MyProject/Migrations',
+        'Home\Migrations' => '/data/doctrine/migrations/lib/MyProject/Migrations',
+        'Home\Component\Migrations' => './Component/MyProject/Migrations',
     ],
 
     'all_or_nothing' => true,

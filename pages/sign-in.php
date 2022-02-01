@@ -3,13 +3,16 @@
 namespace Home\Pages;
 
 use Home\Collections\User;
+use Home\DBManager\DBManager;
 use Home\Views\View;
 
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Views/View.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/User.php');
+require_once('C:\xampp\htdocs\mongo\DBManager\DBManager.php');
 
 $user = new User();
 $view = new View();
+$dbManager = new DBManager();
 
 $headerCookies = isset($_COOKIE['header_cookies']) ? $_COOKIE['header_cookies'] : '';
 $headerRoles = isset($_COOKIE['roles']) ? $_COOKIE['roles'] : '';
@@ -17,7 +20,7 @@ $user->setCookies($headerCookies);
 $user->setRoles($headerRoles);
 
 if ($_POST) {
-	$user->register($_POST['username'], $_POST['password']);
+	$dbManager->register($_POST['username'], $_POST['email'], $_POST['password'], $_POST['firstName']);
 }
 
 ?>
@@ -49,6 +52,15 @@ if ($_POST) {
 			<label for="pass">Password (8 characters minimum):</label>
 			<input type="password" id="pass" name="password" minlength="8" required>
 		</div>
+		<div>
+			<label for="email">Email:</label>
+			<input type="email" id="email" name="email" required>
+		</div>
+		<div>
+			<label for="firstName">Name:</label>
+			<input type="text" id="firstName" name="firstName" required>
+		</div>
+		
 		<input type="submit" value="Sign in">
 	</form>
 	<div>

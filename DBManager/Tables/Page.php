@@ -14,7 +14,6 @@ use Doctrine\ORM\Mapping as ORM;
     /**
 	 * @ORM\Id
 	 * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue
 	 */
 	private $id;
 
@@ -23,16 +22,6 @@ use Doctrine\ORM\Mapping as ORM;
 	 */
 	private $title;
 
-    /**
-	 * @ORM\Column(type="string")
-	 */
-	private $content;
-
-
-    /**
-	 * @ORM\Column(type="string")
-	 */
-	private $email;
 
     /**
     * @ORM\Column(type="datetime", nullable=false)
@@ -73,42 +62,6 @@ use Doctrine\ORM\Mapping as ORM;
 	public function setTitle($title): self
 	{
 		$this->title = $title;
-
-		return $this;
-	}
-
-	/**
-	 * Get the value of content
-	 */
-	public function getContent()
-	{
-		return $this->content;
-	}
-
-	/**
-	 * Set the value of content
-	 */
-	public function setContent($content): self
-	{
-		$this->content = $content;
-
-		return $this;
-	}
-
-	/**
-	 * Get the value of email
-	 */
-	public function getEmail()
-	{
-		return $this->email;
-	}
-
-	/**
-	 * Set the value of email
-	 */
-	public function setEmail($email): self
-	{
-		$this->email = $email;
 
 		return $this;
 	}

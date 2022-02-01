@@ -17,8 +17,8 @@ class View
 	{
 		$html = '<div class="row hidden-md-up postsGridWrap">';
 		foreach ($content as $page) :
-		$url = "index.php?page=" . $page->getId();
-		$html .= '<div class="col-md-' . self::PERCOL .' mb-2 mt-2">
+			$url = "index.php?page=" . $page->getId();
+			$html .= '<div class="col-md-' . self::PERCOL . ' mb-2 mt-2">
 			<div class="posts-card m-auto">
 				<a href="' . $url . '">
 					<div class="card-body p-2">
@@ -44,6 +44,7 @@ class View
 
 	public function setComments($content, $main = null, $moderator = null)
 	{
+		
 		$html = '<div id="commentsBox" >
             <div id="makeCommentBox">
 			<form method="POST" enctype="multipart/form-data">
@@ -67,10 +68,10 @@ class View
 										<p class="commentDate">' . $comment->getCreateTime()->format('Y:m:d H:i:s') . '</p>
 									</div><div>
 									<p class="commentText">' . $comment->getContent() . '</p>';
-									$html .= $this->displayAttachment($file);
-									$html .= '</div><div>';
-									$html .= $moderator ? '<a href="?page=' . $_GET['page'] . '&remove=' . $comment->getId() . '"><button>Delete</button></a>' : '';	
-							$html .= '</div></li>';
+				$html .= $this->displayAttachment($file);
+				$html .= '</div><div>';
+				$html .= $moderator ? '<a href="?page=' . $_GET['page'] . '&remove=' . $comment->getId() . '"><button>Delete</button></a>' : '';
+				$html .= '</div></li>';
 			}
 		}
 		$html .= '</ul>
@@ -95,12 +96,12 @@ class View
 			</thead>
 			<tbody>
 			<tr>';
-		foreach ($content as $log){
+		foreach ($content as $log) {
 			$html .= '<th scope="row">' . ++$iter . '</th>
-			<td style="width: 20%">' . $log['_id'] . '</td>
-			<td style="width: 100%"> <p>' . $log['message'] . '</p>
-			<td>' . $log['actionType'] . '</td>
-			<td>' . date('Y-m-d H:i:s',$log['createTime']/1000) . '</td>
+			<td style="width: 20%">' . $log->getId() . '</td>
+			<td style="width: 100%"> <p>' . $log->getMessage() . '</p>
+			<td>' . $log->getAction() . '</td>
+			<td>' . $log->getCreateTime()->format('Y:m:d H:i:s') . '</td>
 		  </tr>';
 		}
 		$html .= '</tbody>
@@ -138,14 +139,13 @@ class View
 		return $html;
 	}
 	private function displayAttachment($source)
-    {
-        if($source){
-            if(strpos($source, ".mp4")){
-                return '<video src=' . $source . ' autoplay loop>';
-            }
-            return '<img style="max-width: 100px; max-height: 100px;" src=' . $source . '>';
-        }
-        return '';
-    }
-
+	{
+		if ($source) {
+			if (strpos($source, ".mp4")) {
+				return '<video src=' . $source . ' autoplay loop>';
+			}
+			return '<img style="max-width: 100px; max-height: 100px;" src=' . $source . '>';
+		}
+		return '';
+	}
 }

@@ -3,13 +3,16 @@
 namespace Home\Pages;
 
 use Home\Collections\User;
+use Home\DBManager\DBManager;
 use Home\Views\View;
 
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Collections/User.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Views/View.php');
+require_once('C:\xampp\htdocs\mongo\DBManager\DBManager.php');
 
 $user = new User();
 $view = new View();
+$dbManager = new DBManager();
 
 
 $headerCookies = isset($_COOKIE['header_cookies']) ? $_COOKIE['header_cookies'] : '';
@@ -19,7 +22,7 @@ $user->setRoles($headerRoles);
 
 $wiki = isset($_POST['wiki']) ? $_POST['wiki'] : '';
 if ($wiki) {
-	$user->sendPage($wiki);
+	$dbManager->sendPage($wiki);
 }
 ?>
 <!doctype html>
