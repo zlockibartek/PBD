@@ -59,17 +59,17 @@ class View
                 <ul id="commentList">';
 		if ($content) {
 			foreach ($content as $comment) {
-				$file = isset($comment['attachements']) && $comment['attachements'] ? self::SERVER . $comment['attachements'][0] : '';
+				$file = !empty($comment->getAttachments()) ? self::SERVER . $comment->getAttachements() : '';
 				$html .= '<li>
 								<div class="commentBox">
 									<div class="commentCred">
-										<p class="commentUsername">' . $comment['eamil'] . '</p>
-										<p class="commentDate">' . date('Y-m-d H:i:s', $comment['timestamp']/1000) . '</p>
+										<p class="commentUsername">' . $comment->getNickname() . '</p>
+										<p class="commentDate">' . $comment->getCreateTime()->format('Y:m:d H:i:s') . '</p>
 									</div><div>
-									<p class="commentText">' . $comment['text'] . '</p>';
+									<p class="commentText">' . $comment->getContent() . '</p>';
 									$html .= $this->displayAttachment($file);
 									$html .= '</div><div>';
-									$html .= $moderator ? '<a href="?page=' . $_GET['page'] . '&remove=' . $comment['timestamp'] . '"><button>Delete</button></a>' : '';	
+									$html .= $moderator ? '<a href="?page=' . $_GET['page'] . '&remove=' . $comment->getId() . '"><button>Delete</button></a>' : '';	
 							$html .= '</div></li>';
 			}
 		}

@@ -76,19 +76,6 @@ class User
 
 	public function logOut()
 	{
-		$this->cookies = $this->cookies ? explode('set-cookie:', $this->cookies)[1] : '';
-		$options = array(
-			'http' => array(
-				'header'  => "Content-type: application/json\r\n" .
-					"Cookie:" . $this->cookies . "\r\n",
-				'method'  => 'POST',
-				'content' => ''
-			)
-		);
-		$context = stream_context_create($options);
-		$logout = json_decode(file_get_contents(self::API_LOGOUT, false, $context), true);
-		$this->cookies = '';
-		$this->roles = '';
 		setcookie('header_cookies', '', '1', '/');
 		setcookie('roles', '', '1', '/');
 	}

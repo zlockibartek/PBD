@@ -53,25 +53,28 @@ if ($_POST) {
   $search = isset($_POST['search']) ? $_POST['search'] : '';
   if ($text) {
     $file = isset($_FILES['file']) ? $_FILES['file'] : '';
-    $fileName = isset($file) && $file['name'] ? $file['name'] : [];
-    $user->sendComment($text, $page, $fileName);
+    $fileName = isset($file) && $file['name'] ? $file['name'] : '';
+    // $user->sendComment($text, $page, $fileName);
+    $dbManager->sendComment($text, 'test', 'test', $page, $fileName);
     if ($file && $file['name']) {
       $user->sendFile($file);
     }
   }
 }
+
 if (!$page) {
   $view->setGrid($dbManager->getPages($button, $search));
 } else {
-  $content = $singlePage->getPage($page);
-  $commentsP = $comments->getComments($page);
+  $content = $dbManager->getPage($page);
+  $commentsP = $dbManager->getComments($page);
   if (!$content) {
     $view->setPage('');
     $title = 'Nie ma takiej strony';
   } else {
-    $view->setPage($content['text']);
+    $content = $content[0];
+    $view->setPage($content->getContent());
     $view->setComments($commentsP, null, $user->isModerator());
-    $title = $content['title'];
+    $title = $content->getTitle();
   }
 }
 

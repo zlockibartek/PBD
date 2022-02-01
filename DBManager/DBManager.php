@@ -2,8 +2,10 @@
 
 namespace Home\DBManager;
 
+use DateTime;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager as EM;
+use Home\DBManager\Tables\Comment;
 
 require_once "C:\\xampp\htdocs\mongo\\vendor\autoload.php";
 class DBManager
@@ -33,8 +35,8 @@ class DBManager
 			'host' => 'localhost',
 			'driver' => 'pdo_mysql'
 		);
-
 		$this->entityManager = EM::create($conn, $config);
+		// return DependencyFactory::fromEntityManager($migrationConfig, new ExistingEntityManager($this->entityManager));
 	}
 
 	public function getPages($sort = 'popular', $title = null, $offset = 0, $count = 21)
@@ -103,6 +105,24 @@ class DBManager
 		if (!$pageId)
 			return null;
 		return $this->entityManager->getRepository('Home\DBManager\Tables\Page')->findBy(['id' => $pageId]);
+	}
+
+	public function sendComment($text, $nickname, $email, $pageId, $attachment) {
+		echo '<pre>';
+		var_dump($attachment);
+		echo '</pre>';
+		$comment = new Comment();
+		$comment->setContent($text);
+		$comment->setNickname($nickname);
+		$comment->setUserEmail($email);
+		$comment->setPageId($pageId);
+		$comment->setAttachments($attachment);
+		$comment->setCreateTime(new DateTime(date('Y:m:d H:i:s')));
+		$this->entityManager->persist($comment);
+		$this->entityManager->flush();
+	}
+	
+	public function getUser() {
 
 	}
 }
