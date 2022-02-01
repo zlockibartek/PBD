@@ -47,13 +47,11 @@ class DBManager
 	public function getPages($sort = 'popular', $title = null, $offset = 0, $count = 21)
 	{
 		$pageRepository = $this->entityManager->getRepository('Home\DBManager\Tables\Page');
-		$result = $this->entityManager->createQueryBuilder();
-		$result->select('count(pageId)');
+		$result = $this->entityManager->createQuery("SELECT * From Home\DBManager\Tables\Page");
 		// , COUNT(*) as NUM
-		// echo '<pre>';
-
-		// var_dump($result->getQuery()->getSingleScalarResult());
-		// echo '</pre>';
+		echo '<pre>';
+		var_dump($result->getResult());
+		echo '</pre>';
 		if ($title) {
 			return $pageRepository->findBy(['title' => $title]);
 		}
@@ -76,43 +74,6 @@ class DBManager
 		return $this->entityManager->getRepository('Home\DBManager\Tables\Log')->findBy([], [], 10);
 	}
 
-	// public function setComments($content, $main = null, $moderator = null)
-	// {
-	// 	$html = '<div id="commentsBox" >
-	//         <div id="makeCommentBox">
-	// 		<form method="POST" enctype="multipart/form-data">
-	//             <p class="LebelBasic"></p>
-	//             <input type="text" id="makeCommentText" name="send" required minlength="4" size="300"> <!--Pozmieniać wartości-->
-	//             <div id="makeCommentFiles">
-	//                 <input type="file" id="commentFile1" name="file" accept=".jpg,.jpeg,.png,.gif">
-	//             </div>
-	//             <input type="submit" id="makeCommentSubmit" Value="Comment">
-	// 			</form>
-	//         </div>
-	//         <div id="commentsListBox">
-	//             <ul id="commentList">';
-	// 	if ($content) {
-	// 		foreach ($content as $comment) {
-	// 			$file = isset($comment['attachements']) && $comment['attachements'] ? self::SERVER . $comment['attachements'][0] : '';
-	// 			$html .= '<li>
-	// 							<div class="commentBox">
-	// 								<div class="commentCred">
-	// 									<p class="commentUsername">' . $comment['eamil'] . '</p>
-	// 									<p class="commentDate">' . date('Y-m-d H:i:s', $comment['timestamp']/1000) . '</p>
-	// 								</div><div>
-	// 								<p class="commentText">' . $comment['text'] . '</p>';
-	// 								$html .= $this->displayAttachment($file);
-	// 								$html .= '</div><div>';
-	// 								$html .= $moderator ? '<a href="?page=' . $_GET['page'] . '&remove=' . $comment['timestamp'] . '"><button>Delete</button></a>' : '';	
-	// 						$html .= '</div></li>';
-	// 		}
-	// 	}
-	// 	$html .= '</ul>
-	//         </div>
-	//     </div>';
-
-	// 	$this->view .= $html;
-	// }
 	public function login($email, $password)
 	{
 		$user = $this->entityManager->getRepository('Home\DBManager\Tables\User')->findBy(['email' => $email]);
