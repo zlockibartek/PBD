@@ -3,8 +3,10 @@
 namespace Home\DBManager;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager as EM;
+use Doctrine\ORM\Query;
 use Home\DBManager\Tables\Category;
 use Home\DBManager\Tables\Comment;
 use Home\DBManager\Tables\Contains;
@@ -44,20 +46,32 @@ class DBManager
 		// return DependencyFactory::fromEntityManager($migrationConfig, new ExistingEntityManager($this->entityManager));
 	}
 
-	public function getPages($sort = 'popular', $title = null, $offset = 0, $count = 21)
+	public function getPages($sort = 'popular', $title = null, $category = null, $offset = 0, $count = 21)
 	{
 		$pageRepository = $this->entityManager->getRepository('Home\DBManager\Tables\Page');
-		$result = $this->entityManager->createQuery("SELECT * From Home\DBManager\Tables\Page");
-		// , COUNT(*) as NUM
-		echo '<pre>';
-		var_dump($result->getResult());
-		echo '</pre>';
+		$commentRepository = $this->entityManager->getRepository('Home\DBManager\Tables\Comment');
+
 		if ($title) {
 			return $pageRepository->findBy(['title' => $title]);
 		}
 
+		if ($category) {
+			$contains = $this->entityManager->getRepository('Home\DBManager\Tables\Contains');
+			$query = $contains->createQueryBuilder('p');
+			$qb = $query->select('p.pageId')->where('p.categoryId = :id')->setParameter('id', $category);
+			return $this->entityManager->getRepository('Home\DBManager\Tables\Page')->findBy(['id' => $qb->getQuery()->getSingleColumnResult()]);
+		}
+
+		$query = $pageRepository->createQueryBuilder('p');
+
 		if ($sort == 'last') {
-			return $pageRepository->findBy([], ['createDate']);
+			$query = $pageRepository->createQueryBuilder('p');
+			$qb = $query->select('p.id, p.title')->leftJoin('Home\DBManager\Tables\Comment', 'c', 'WITH', 'p.id = c.pageId')->groupBy('p.id')->orderBy('c.createTime', 'DESC');
+			return $qb->getQuery()->getResult();
+		}
+		if ($sort == 'popular') {
+			$qb = $query->select('p.id', 'p.title', 'count(c.id) as num')->leftJoin('Home\DBManager\Tables\Comment', 'c', 'WITH', 'p.id = c.pageId')->groupBy('p.id')->orderBy('num', 'DESC');;
+			return $qb->getQuery()->getResult();
 		}
 		return $pageRepository->findAll();
 	}
@@ -71,7 +85,7 @@ class DBManager
 
 	public function getLogs()
 	{
-		return $this->entityManager->getRepository('Home\DBManager\Tables\Log')->findBy([], [], 10);
+		return $this->entityManager->getRepository('Home\DBManager\Tables\Log')->findBy([], ['createTime' => 'DESC'], 10);
 	}
 
 	public function login($email, $password)
@@ -115,6 +129,11 @@ class DBManager
 			$this->entityManager->remove($comment[0]);
 			$this->entityManager->flush();
 		}
+	}
+
+	public function getCategories()
+	{
+		return $this->entityManager->getRepository('Home\DBManager\Tables\Category')->findAll();
 	}
 
 	public function sendPage($url)
@@ -180,12 +199,24 @@ class DBManager
 		if (!$nickname)
 			return;
 		$comment = new Comment();
+		$page = $this->entityManager->getRepository('Home\DBManager\Tables\Page')->findBy(['id' => $pageId])[0];
 		$comment->setContent($text);
 		$comment->setNickname($nickname);
 		$comment->setUserEmail($email);
-		$comment->setPageId($pageId);
-		$comment->setAttachments($attachment);
+		$comment->setPageId($page);
 		$comment->setCreateTime(new DateTime(date('Y:m:d H:i:s')));
+		if ($attachment) {
+
+			$image = $_FILES['file'];
+			$imageName = $image['name'];
+			$imageTemp = $image['tmp_name'];
+			$path = 'mongo\assets\\';
+			$absolutePath = 'C:\xampp\htdocs\mongo\assets\\';
+			if (is_uploaded_file($imageTemp)) {
+				move_uploaded_file($imageTemp, $absolutePath . $imageName);
+				$comment->setAttachments($path . $imageName);
+			}
+		}
 		$this->addLog('new comment', 'New message: ' . $text);
 		$this->entityManager->persist($comment);
 		$this->entityManager->flush();

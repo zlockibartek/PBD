@@ -21,10 +21,9 @@ include($_SERVER['DOCUMENT_ROOT'] . '/mongo/Views/View.php');
 require_once('C:\xampp\htdocs\mongo\DBManager\DBManager.php');
 
 $dbManager = new DBManagerDBManager();
-$dbManager->getPages();
 $em = $dbManager->entityManager;
 
-$categories = new Categories();
+$categories = $dbManager->getCategories();
 $comments = new Comments();
 $singlePage = new SinglePage();
 $pages = new Pages();
@@ -53,19 +52,16 @@ if ($remove) {
 if ($_POST) {
   $text = isset($_POST['send']) ? $_POST['send'] : '';
   $search = isset($_POST['search']) ? $_POST['search'] : '';
+  $category = isset($_POST['category']) ? $_POST['category'] : '';
   if ($text) {
     $file = isset($_FILES['file']) ? $_FILES['file'] : '';
     $fileName = isset($file) && $file['name'] ? $file['name'] : '';
-    // $user->sendComment($text, $page, $fileName);
     $dbManager->sendComment($text, $username, $email, $page, $fileName);
-    if ($file && $file['name']) {
-      $user->sendFile($file);
-    }
   }
 }
 
 if (!$page) {
-  $view->setGrid($dbManager->getPages($button, $search));
+  $view->setGrid($dbManager->getPages($button, $search, $category));
 } else {
   $content = $dbManager->getPage($page);
   $commentsP = $dbManager->getComments($page);
@@ -127,9 +123,19 @@ if (!$page) {
           <?php if (!$page) : ?>
             <a href="?button=popular"><button id="latest">Popular</button></a>
             <a href="?button=last"><button id="popular">Latest</button></a>
+            <form action="">
+
+            </form>
             <form action="" method="POST">
               <label for="site-search">Search the site:</label>
               <input type="search" id="site-search" name="search" aria-label="Search through site content">
+              <label for="category">Choose category</label>
+              <select class="form-select" name="category" aria-label="Default select example">
+                <option value=""></option>
+                <?php foreach ($categories as $category) : ?>
+                  <option value="<?= $category->getId() ?>"><?= $category->getTitle() ?></option>
+                <?php endforeach; ?>
+              </select>
               <input type="submit" value="Search">
             </form>
           <?php endif; ?>

@@ -41,8 +41,8 @@ use Doctrine\ORM\Mapping as ORM;
     private $createTime;
 
     /**
-	 * @ORM\Column(type="integer")
-	 * @ORM\ManyToOne(targetEntity="Page", inversedBy="id")
+	 * @ORM\ManyToOne(targetEntity="Page")
+	 * @ORM\JoinColumn(name="pageId", referencedColumnName="id")
 	 */
 	private $pageId;
 

@@ -83,4 +83,5 @@ use Doctrine\ORM\Mapping as ORM;
 
         return $this;
     }
+	
  }

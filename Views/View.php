@@ -17,12 +17,14 @@ class View
 	{
 		$html = '<div class="row hidden-md-up postsGridWrap">';
 		foreach ($content as $page) :
-			$url = "index.php?page=" . $page->getId();
+			$title = gettype($page) == 'object' ? $page->getTitle() : $page['title'];
+			$id = gettype($page) == 'object' ? $page->getId() : $page['id'];
+			$url = "index.php?page=" . $id;
 			$html .= '<div class="col-md-' . self::PERCOL . ' mb-2 mt-2">
 			<div class="posts-card m-auto">
 				<a href="' . $url . '">
 					<div class="card-body p-2">
-						<h5 class="card-title">' . $page->getTitle() . '</h5>
+						<h5 class="card-title">' . $title . '</h5>
 					</div>
 				</a>
 			</div>
@@ -60,7 +62,7 @@ class View
                 <ul id="commentList">';
 		if ($content) {
 			foreach ($content as $comment) {
-				$file = !empty($comment->getAttachments()) ? self::SERVER . $comment->getAttachements() : '';
+				$file = !empty($comment->getAttachments()) ? '\\' . $comment->getAttachments() : '';
 				$html .= '<li>
 								<div class="commentBox">
 									<div class="commentCred">
