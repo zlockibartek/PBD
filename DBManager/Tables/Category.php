@@ -14,6 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
     /**
      * @ORM\Id
 	 * @ORM\Column(type="integer")
+	 * @ORM\OneToMany(targetEntity="Contains", mappedBy="categoryId", cascade={"remove"}, orphanRemoval="true")
      * @ORM\GeneratedValue
 	 */
 	private $id;

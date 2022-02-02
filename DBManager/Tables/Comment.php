@@ -43,10 +43,10 @@ use Doctrine\ORM\Mapping as ORM;
     /**
 	 * @ORM\ManyToOne(targetEntity="Page")
 	 * @ORM\JoinColumn(name="pageId", referencedColumnName="id")
+	 * @ORM\OneToMany(targetEntity="Contains", mappedBy="pageId", cascade={"remove"}, orphanRemoval="true")
 	 */
 	private $pageId;
 
-    //???
     /**
 	 * @ORM\Column(type="string")
 	 * @ORM\ManyToOne(targetEntity="User", inversedBy="email")
